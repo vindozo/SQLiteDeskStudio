@@ -3,6 +3,8 @@
 Small Windows HTA tool for browsing and editing SQLite databases using the
 bundled `sqlite3.exe`.
 
+![screen](screen.png)
+
 ## Requirements
 
 - Windows with HTA support
