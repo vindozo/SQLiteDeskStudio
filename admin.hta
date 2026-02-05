@@ -1,0 +1,3522 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SQLite Desk Studio v.1.1.2026</title>
+    <meta http-equiv="x-ua-compatible" content="ie=9">
+    <meta charset="utf-8">
+    <HTA:APPLICATION
+        ID="SQLITEApp"
+        APPLICATIONNAME="SQLite Desk Studio "
+        BORDERSTYLE="complex"
+        SINGLEINSTANCE="yes"
+        WINDOWSTATE="normal"
+        SCROLL="no"
+        INNERBORDER="no"
+        CAPTION="yes"
+        MAXIMIZEBUTTON="yes"
+        MINIMIZEBUTTON="yes"
+        SYSMENU="yes"
+        RESIZE="yes"
+    >
+    <style type="text/css">
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: Tahoma, Arial, sans-serif;
+            font-size: 12px;
+            color: #111;
+            background: #ffffff;
+        }
+        #app {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            display: none;
+        }
+        #sidebar {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 280px;
+            background: #1d1d1d;
+            color: #e7e7e7;
+            overflow: auto;
+        }
+        #logo {
+            font-size: 16px;
+            padding: 14px 12px;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #333;
+        }
+        #sqliteVersion {
+            padding: 0 12px 10px 12px;
+            border-bottom: 1px solid #333;
+            font-size: 11px;
+        }
+        #dbActions {
+            padding: 8px 12px;
+            border-bottom: 1px solid #333;
+        }
+        #dbActions a {
+            display: inline-block;
+            margin: 4px 8px 4px 0;
+            color: #c7c7c7;
+            text-decoration: none;
+        }
+        #dbActions a:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+        #dbList {
+            padding: 8px 6px 12px 6px;
+        }
+        .db-item {
+            margin: 4px 0;
+            padding: 6px;
+            background: #262626;
+            border: 1px solid #2f2f2f;
+        }
+        .db-item.active {
+            background: #2f2f2f;
+            border-color: #3b3b3b;
+        }
+        .db-title {
+            cursor: pointer;
+            font-weight: bold;
+            color: #f1f1f1;
+        }
+        .table-list {
+            margin-top: 6px;
+            padding-left: 10px;
+        }
+        .table-item {
+            cursor: pointer;
+            margin: 3px 0;
+            color: #cfcfcf;
+        }
+        .table-item:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+        .table-item.active {
+            color: #ffffff;
+            font-weight: bold;
+        }
+        #main {
+            position: absolute;
+            left: 280px;
+            right: 0;
+            top: 0;
+            bottom: 0;
+        }
+        #topbar {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            height: 64px;
+            background: #f2f2f2;
+            border-bottom: 1px solid #cfcfcf;
+            padding: 6px 10px;
+            box-sizing: border-box;
+        }
+        #currentInfo {
+            float: left;
+            padding-top: 4px;
+        }
+        #topActions {
+            float: right;
+        }
+        #topActions a {
+            margin-left: 10px;
+            text-decoration: none;
+            color: #1a1a1a;
+        }
+        #topActions a:hover {
+            text-decoration: underline;
+        }
+        #topActions a.disabled {
+            color: #9a9a9a;
+            pointer-events: none;
+        }
+        #status {
+            position: absolute;
+            left: 10px;
+            right: 10px;
+            bottom: 6px;
+            color: #444;
+        }
+        #status.error {
+            color: #b00000;
+        }
+        #content {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 64px;
+            bottom: 0;
+            overflow: hidden;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        #splitContainer {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+        }
+        #tablePane {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 240px;
+            z-index: 10;
+        }
+        #tableScroll {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            overflow: auto;
+            padding: 12px;
+            box-sizing: border-box;
+        }
+        #sqlResizeHandle {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: #d7d7d7;
+            cursor: ns-resize;
+            z-index: 30;
+        }
+        #sqlPane {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 240px;
+            background: #f7f7f7;
+            border-top: 1px solid #cfcfcf;
+            box-sizing: border-box;
+            z-index: 20;
+        }
+        #sqlHeader {
+            position: relative;
+            height: 28px;
+            line-height: 16px;
+            padding: 6px 10px;
+            background: #e9e9e9;
+            border-bottom: 1px solid #cfcfcf;
+            box-sizing: border-box;
+        }
+        #sqlControls {
+            position: absolute;
+            right: 10px;
+            top: 6px;
+        }
+        #sqlControls a {
+            margin-left: 10px;
+            text-decoration: none;
+            color: #1a1a1a;
+        }
+        #sqlControls a:hover {
+            text-decoration: underline;
+        }
+        #sqlControls a.disabled {
+            color: #9a9a9a;
+            pointer-events: none;
+        }
+        #sqlBody {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 28px;
+            bottom: 0;
+            overflow: auto;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        #welcome {
+            padding: 12px;
+            background: #f9f9f9;
+            border: 1px solid #e3e3e3;
+        }
+        #tableView {
+            display: none;
+        }
+        #tableTitle {
+            font-size: 14px;
+            margin: 6px 0 10px 0;
+        }
+        #tableActions {
+            margin-bottom: 10px;
+        }
+        #tableActions a {
+            margin-right: 12px;
+            text-decoration: none;
+            color: #1a1a1a;
+        }
+        #tableActions a:hover {
+            text-decoration: underline;
+        }
+        #pager {
+            margin-bottom: 10px;
+        }
+        #pager a {
+            margin-right: 12px;
+            text-decoration: none;
+            color: #1a1a1a;
+        }
+        #pager a:hover {
+            text-decoration: underline;
+        }
+        #pager a.disabled {
+            color: #9a9a9a;
+            pointer-events: none;
+        }
+        #pager span {
+            margin-right: 12px;
+        }
+        .data-table th input {
+            font-size: 11px;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 12px;
+        }
+        .data-table th, .data-table td {
+            border: 1px solid #cccccc;
+            padding: 4px;
+            vertical-align: top;
+            font-size: 12px;
+        }
+        .data-table th {
+            background: #efefef;
+        }
+        .data-table input {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #bbbbbb;
+            padding: 2px 4px;
+            font-size: 12px;
+        }
+        .data-table textarea {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #bbbbbb;
+            padding: 2px 4px;
+            font-size: 12px;
+            resize: vertical;
+            min-height: 28px;
+        }
+        .row-dirty td {
+            background: #fff6dc;
+        }
+        .cell-null input {
+            background: #f8f8f8;
+            color: #777777;
+        }
+        #newRowBlock {
+            padding: 8px;
+            border: 1px solid #dddddd;
+            background: #fafafa;
+        }
+        #newRowBlock .label {
+            margin-bottom: 6px;
+            color: #333333;
+        }
+        #sqlEditorArea textarea {
+            width: 100%;
+            height: 160px;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 12px;
+            padding: 6px;
+            box-sizing: border-box;
+        }
+        #sqlEditorActions {
+            margin-top: 6px;
+        }
+        #sqlEditorActions a {
+            margin-right: 12px;
+            text-decoration: none;
+            color: #1a1a1a;
+        }
+        #sqlEditorActions a:hover {
+            text-decoration: underline;
+        }
+        #sqlEditorArea .muted {
+            margin-bottom: 6px;
+        }
+        #sqlResults {
+            margin-top: 10px;
+        }
+        #sqlResultPager {
+            margin-bottom: 8px;
+        }
+        #sqlResultPager a {
+            margin-right: 12px;
+            text-decoration: none;
+            color: #1a1a1a;
+        }
+        #sqlResultPager a:hover {
+            text-decoration: underline;
+        }
+        #sqlResultPager a.disabled {
+            color: #9a9a9a;
+            pointer-events: none;
+        }
+        #sqlResultPager span {
+            margin-right: 12px;
+        }
+        #sqlOutput {
+            margin-top: 8px;
+            padding: 6px;
+            border: 1px solid #d0d0d0;
+            background: #f9f9f9;
+            white-space: pre-wrap;
+        }
+        #loginOverlay {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            background: #1f1f1f;
+            color: #f1f1f1;
+            display: none;
+        }
+        #loginBox {
+            width: 320px;
+            margin: 120px auto 0 auto;
+            padding: 16px;
+            background: #2a2a2a;
+            border: 1px solid #3a3a3a;
+        }
+        #loginBox h2 {
+            margin: 0 0 12px 0;
+            font-size: 16px;
+        }
+        #loginBox input {
+            width: 100%;
+            padding: 6px;
+            box-sizing: border-box;
+            border: 1px solid #444;
+            background: #1c1c1c;
+            color: #f1f1f1;
+            font-size: 12px;
+        }
+        #loginBox .actions {
+            margin-top: 10px;
+        }
+        #loginBox .actions a {
+            margin-right: 12px;
+            color: #ffffff;
+            text-decoration: none;
+        }
+        #loginBox .actions a:hover {
+            text-decoration: underline;
+        }
+        #loginError {
+            margin-top: 8px;
+            color: #ff9a9a;
+        }
+        #structureView {
+            display: none;
+            padding: 12px;
+            background: #f9f9f9;
+            border: 1px solid #e3e3e3;
+            box-sizing: border-box;
+        }
+        #tableDesignerBox {
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            border: none;
+            box-sizing: border-box;
+        }
+        #tableDesignerTitle {
+            font-size: 15px;
+            margin: 0 0 10px 0;
+        }
+        #tableDesignerForm {
+            margin-bottom: 8px;
+        }
+        #tableDesignerForm input {
+            width: 300px;
+            padding: 4px 6px;
+            border: 1px solid #bdbdbd;
+            box-sizing: border-box;
+        }
+        #designerColumnsTable th, #designerColumnsTable td {
+            border: 1px solid #c9c9c9;
+            padding: 4px;
+        }
+        #designerColumnsTable {
+            width: 100%;
+            border-collapse: collapse;
+            background: #ffffff;
+        }
+        #designerIndexes {
+            margin-top: 12px;
+        }
+        #designerIndexesTable {
+            width: 100%;
+            border-collapse: collapse;
+            background: #ffffff;
+        }
+        #designerIndexesTable th, #designerIndexesTable td {
+            border: 1px solid #c9c9c9;
+            padding: 4px;
+            vertical-align: top;
+        }
+        #designerIndexActions {
+            margin-top: 6px;
+        }
+        #designerIndexActions a {
+            margin-right: 12px;
+            text-decoration: none;
+            color: #1a1a1a;
+        }
+        #designerIndexActions a:hover {
+            text-decoration: underline;
+        }
+        .designer-index-name {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 4px 6px;
+            border: 1px solid #bdbdbd;
+            font-size: 12px;
+        }
+        .designer-index-fields label {
+            display: inline-block;
+            margin-right: 8px;
+            margin-bottom: 4px;
+        }
+        .designer-input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 4px 6px;
+            border: 1px solid #bdbdbd;
+            font-size: 12px;
+        }
+        .designer-type-select {
+            width: 100%;
+        }
+        .designer-pk {
+            width: auto;
+        }
+        .designer-gen-input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 4px 6px;
+            border: 1px solid #bdbdbd;
+            font-size: 12px;
+        }
+        .designer-gen-select {
+            width: 100%;
+            margin-top: 4px;
+        }
+        #tableDesignerActions {
+            margin-top: 10px;
+        }
+        #tableDesignerActions a {
+            margin-right: 12px;
+            text-decoration: none;
+            color: #1a1a1a;
+        }
+        #tableDesignerActions a:hover {
+            text-decoration: underline;
+        }
+        .muted {
+            color: #999999;
+        }
+    </style>
+    <script type="text/javascript">
+        var fso = null;
+        var shell = null;
+        var appDir = "";
+        var sqlitePath = "";
+        var configPassword = "";
+        var pageRows = 25;
+        var NULL_SENTINEL = "__NULL__";
+        var sqlPaneHeight = 0;
+        var sqlPaneLastHeight = 0;
+        var sqlPaneCollapsed = true;
+        var sqlPaneFullscreen = false;
+        var sqlDefaultRatio = 0.3;
+        var tableDesignerMode = "";
+        var tableDesignerOriginal = "";
+        var designerIndexOriginals = [];
+        var columnTypeOptions = [
+            "TEXT",
+            "NUMERIC",
+            "INTEGER",
+            "REAL",
+            "BLOB"
+        ];
+        var sqlResultState = {
+            columns: [],
+            rows: [],
+            pageIndex: 0,
+            totalPages: 0,
+            totalRows: 0,
+            rawCsv: ""
+        };
+        var state = {
+            dbs: [],
+            currentDb: null,
+            currentTable: null,
+            currentColumns: [],
+            currentColumnInfo: [],
+            currentColumnMap: {},
+            currentFilters: {},
+            sortColumn: "",
+            sortDir: "ASC",
+            pageIndex: 0,
+            totalRows: 0,
+            totalPages: 0
+        };
+
+        window.onload = function () {
+            initApp();
+        };
+
+        function initApp() {
+            try {
+                fso = new ActiveXObject("Scripting.FileSystemObject");
+                shell = new ActiveXObject("WScript.Shell");
+            } catch (e) {
+                alert("ActiveX не доступен: " + e.message);
+                return;
+            }
+
+            appDir = getAppDir();
+            sqlitePath = appDir + "\\sqlite3.exe";
+            var config = loadConfig();
+            configPassword = config.password;
+            pageRows = config.pageRows;
+
+            bindUi();
+            initSplitLayout();
+            clearSqlResult();
+            updateSqliteVersion();
+            if (configPassword) {
+                showLogin();
+            } else {
+                showApp();
+            }
+        }
+
+        function bindUi() {
+            bindAction("btnLogin", function () { handleLogin(); });
+            bindAction("btnExit", function () { window.close(); });
+            bindAction("btnNewDb", function () { createDatabase(); });
+            bindAction("btnRenameDb", function () { renameDatabase(); });
+            bindAction("btnCopyDb", function () { copyDatabase(); });
+            bindAction("btnDeleteDb", function () { deleteDatabase(); });
+            bindAction("btnRefreshDb", function () { refreshDbList(); });
+
+            bindAction("btnRefreshAll", function () { refreshAll(); });
+            bindAction("btnNewTable", function () { createTable(); });
+            bindAction("btnRenameTable", function () { renameTable(); });
+            bindAction("btnModifyTable", function () { modifyTable(); });
+            bindAction("btnCopyTable", function () { copyTable(); });
+            bindAction("btnDeleteTable", function () { deleteTable(); });
+            bindAction("btnSqlEditor", function () { openSqlEditor(""); });
+
+            bindAction("btnSaveChanges", function () { saveTableChanges(); });
+            bindAction("btnAddRow", function () { insertNewRow(); });
+            bindAction("btnReloadTable", function () { reloadTable(); });
+            bindAction("btnClearTable", function () { clearTableData(); });
+            bindAction("btnExportCsv", function () { exportTableCsv(); });
+            bindAction("btnImportCsv", function () { importTableCsv(); });
+            bindAction("btnExportSql", function () { exportTableSql(); });
+            bindAction("btnImportSql", function () { importTableSql(); });
+            bindAction("btnFirstPage", function () { gotoPage(0); });
+            bindAction("btnPrevPage", function () { gotoPage(state.pageIndex - 1); });
+            bindAction("btnNextPage", function () { gotoPage(state.pageIndex + 1); });
+            bindAction("btnLastPage", function () { gotoPage(state.totalPages - 1); });
+            bindAction("btnApplyFilters", function () { applyFiltersFromUi(); });
+            bindAction("btnClearFilters", function () { clearFilters(); });
+            bindAction("btnClearSort", function () { clearSort(); });
+
+            bindAction("btnRunSql", function () { runSqlEditor(); });
+            bindAction("btnClearSql", function () { clearSqlEditor(); });
+            bindAction("btnSqlCollapse", function () { collapseSqlPane(); });
+            bindAction("btnSqlExpand", function () { expandSqlPane(); });
+            bindAction("btnSqlFull", function () { fullscreenSqlPane(); });
+            bindAction("btnSqlFirst", function () { gotoSqlPage(0); });
+            bindAction("btnSqlPrev", function () { gotoSqlPage(sqlResultState.pageIndex - 1); });
+            bindAction("btnSqlNext", function () { gotoSqlPage(sqlResultState.pageIndex + 1); });
+            bindAction("btnSqlLast", function () { gotoSqlPage(sqlResultState.totalPages - 1); });
+            bindAction("btnExportSqlCsv", function () { exportSqlCsv(); });
+            bindAction("btnDesignerAddColumn", function () { addDesignerRow(null); });
+            bindAction("btnDesignerGenerate", function () { submitTableDesigner(); });
+            bindAction("btnDesignerCancel", function () { closeTableDesigner(); });
+            bindAction("btnDesignerAddIndex", function () { addDesignerIndexRow(null); });
+            bindAction("btnDesignerRefreshIndexCols", function () { refreshDesignerIndexColumns(); });
+
+            var pwdInput = document.getElementById("loginPassword");
+            pwdInput.onkeydown = function (evt) {
+                evt = evt || window.event;
+                if (evt.keyCode === 13) {
+                    handleLogin();
+                }
+            };
+        }
+
+        function bindAction(id, handler) {
+            var el = document.getElementById(id);
+            if (!el) { return; }
+            el.onclick = function () {
+                if (el.className && el.className.indexOf("disabled") !== -1) {
+                    return false;
+                }
+                handler();
+                return false;
+            };
+        }
+
+        function showLogin() {
+            document.getElementById("loginOverlay").style.display = "block";
+            document.getElementById("app").style.display = "none";
+            document.getElementById("loginPassword").value = "";
+            document.getElementById("loginError").innerText = "";
+            document.getElementById("loginPassword").focus();
+        }
+
+        function showApp() {
+            document.getElementById("loginOverlay").style.display = "none";
+            document.getElementById("app").style.display = "block";
+            initSplitLayout();
+            refreshDbList();
+        }
+
+        function handleLogin() {
+            var input = document.getElementById("loginPassword").value;
+            if (!configPassword) {
+                showApp();
+                return;
+            }
+            if (input === configPassword) {
+                showApp();
+                return;
+            }
+            document.getElementById("loginError").innerText = "Неверный пароль.";
+        }
+
+        function loadConfig() {
+            var config = { password: "", pageRows: 25 };
+            var path = appDir + "\\admin.ini";
+            if (!fso.FileExists(path)) {
+                return config;
+            }
+            var file = fso.OpenTextFile(path, 1);
+            var content = file.ReadAll();
+            file.Close();
+            var lines = content.split(/\r?\n/);
+            var i;
+            for (i = 0; i < lines.length; i++) {
+                var line = trim(lines[i]);
+                if (line === "" || line.charAt(0) === ";" || line.charAt(0) === "#") {
+                    continue;
+                }
+                var eq = line.indexOf("=");
+                if (eq === -1) {
+                    continue;
+                }
+                var key = trim(line.substring(0, eq)).toLowerCase();
+                var valueText = trim(line.substring(eq + 1));
+                var keyNormalized = key.replace(/[^a-z0-9]/g, "");
+                if (keyNormalized === "password") {
+                    config.password = valueText;
+                } else if (keyNormalized === "pagerows") {
+                    var value = parseInt(valueText, 10);
+                    if (!isNaN(value) && value > 0) {
+                        config.pageRows = value;
+                    }
+                }
+            }
+            return config;
+        }
+
+        function getAppDir() {
+            var path = decodeURIComponent(window.location.pathname);
+            if (path.indexOf("/") === 0 && path.indexOf(":") === 2) {
+                path = path.substring(1);
+            }
+            path = path.replace(/\//g, "\\");
+            return path.substring(0, path.lastIndexOf("\\"));
+        }
+
+        function refreshAll() {
+            refreshDbList();
+            if (state.currentDb) {
+                loadTablesForDb(state.currentDb);
+            }
+            if (state.currentDb && state.currentTable) {
+                loadTableData(state.currentTable);
+            }
+        }
+
+        function refreshDbList() {
+            state.dbs = listDbFiles();
+            if (state.currentDb && !fso.FileExists(state.currentDb)) {
+                state.currentDb = null;
+                state.currentTable = null;
+                state.currentColumns = [];
+            }
+            renderDbList();
+            updateCurrentInfo();
+            updateActions();
+        }
+
+        function listDbFiles() {
+            var list = [];
+            var folder = fso.GetFolder(appDir);
+            var files = new Enumerator(folder.Files);
+            for (; !files.atEnd(); files.moveNext()) {
+                var file = files.item();
+                var ext = fso.GetExtensionName(file.Name).toLowerCase();
+                if (ext === "sqlite") {
+                    list.push({ name: file.Name, path: file.Path });
+                }
+            }
+            list.sort(function (a, b) {
+                var an = a.name.toLowerCase();
+                var bn = b.name.toLowerCase();
+                if (an < bn) { return -1; }
+                if (an > bn) { return 1; }
+                return 0;
+            });
+            return list;
+        }
+
+        function renderDbList() {
+            var listEl = document.getElementById("dbList");
+            listEl.innerHTML = "";
+            if (state.dbs.length === 0) {
+                var empty = document.createElement("div");
+                empty.className = "muted";
+                empty.innerText = "Баз данных *.sqlite не найдено.";
+                listEl.appendChild(empty);
+                var createLink = document.createElement("a");
+                createLink.href = "#";
+                createLink.innerText = "Создать новую базу";
+                createLink.onclick = function () {
+                    createDatabase();
+                    return false;
+                };
+                listEl.appendChild(createLink);
+                state.currentDb = null;
+                state.currentTable = null;
+                showWelcome();
+                updateCurrentInfo();
+                updateActions();
+                return;
+            }
+
+            var i;
+            for (i = 0; i < state.dbs.length; i++) {
+                var db = state.dbs[i];
+                var item = document.createElement("div");
+                item.className = "db-item" + (state.currentDb === db.path ? " active" : "");
+                var title = document.createElement("div");
+                title.className = "db-title";
+                title.innerText = db.name;
+                title.onclick = (function (dbPath) {
+                    return function () {
+                        selectDb(dbPath);
+                    };
+                })(db.path);
+                item.appendChild(title);
+                var tables = document.createElement("div");
+                tables.className = "table-list";
+                item.appendChild(tables);
+                listEl.appendChild(item);
+
+                if (state.currentDb === db.path) {
+                    loadTablesForDb(db.path);
+                }
+            }
+        }
+
+        function selectDb(dbPath) {
+            state.currentDb = dbPath;
+            state.currentTable = null;
+            state.currentColumns = [];
+            resetTableQueryState();
+            updateCurrentInfo();
+            renderDbList();
+            showWelcome();
+            updateActions();
+        }
+
+        function loadTablesForDb(dbPath) {
+            if (!dbPath) { return; }
+            var tables = getTables(dbPath);
+            renderTables(dbPath, tables);
+        }
+
+        function renderTables(dbPath, tables) {
+            var listEl = document.getElementById("dbList");
+            var items = listEl.getElementsByClassName("db-item");
+            var i;
+            for (i = 0; i < items.length; i++) {
+                var title = items[i].getElementsByClassName("db-title")[0];
+                if (!title) { continue; }
+                var name = title.innerText;
+                var fullPath = null;
+                var j;
+                for (j = 0; j < state.dbs.length; j++) {
+                    if (state.dbs[j].name === name) {
+                        fullPath = state.dbs[j].path;
+                        break;
+                    }
+                }
+                var tableList = items[i].getElementsByClassName("table-list")[0];
+                tableList.innerHTML = "";
+                if (fullPath === dbPath) {
+                    if (tables.length === 0) {
+                        var empty = document.createElement("div");
+                        empty.className = "muted";
+                        empty.innerText = "Таблиц нет.";
+                        tableList.appendChild(empty);
+                        var link = document.createElement("a");
+                        link.href = "#";
+                        link.innerText = "Создать таблицу";
+                        link.onclick = function () {
+                            createTable();
+                            return false;
+                        };
+                        tableList.appendChild(link);
+                    } else {
+                        var k;
+                        for (k = 0; k < tables.length; k++) {
+                            var t = document.createElement("div");
+                            t.className = "table-item" + (state.currentTable === tables[k] ? " active" : "");
+                            t.innerText = tables[k];
+                            t.onclick = (function (tableName) {
+                                return function () {
+                                    selectTable(tableName);
+                                };
+                            })(tables[k]);
+                            tableList.appendChild(t);
+                        }
+                    }
+                }
+            }
+            if (state.currentTable && !containsName(tables, state.currentTable)) {
+                state.currentTable = null;
+                updateCurrentInfo();
+                updateActions();
+            }
+        }
+
+        function selectTable(tableName) {
+            state.currentTable = tableName;
+            resetTableQueryState();
+            updateCurrentInfo();
+            updateActions();
+            loadTableData(tableName);
+        }
+
+        function resetTableQueryState() {
+            state.currentFilters = {};
+            state.sortColumn = "";
+            state.sortDir = "ASC";
+            state.pageIndex = 0;
+            state.totalRows = 0;
+            state.totalPages = 0;
+        }
+
+        function showWelcome() {
+            document.getElementById("welcome").style.display = "block";
+            document.getElementById("tableView").style.display = "none";
+            var structureView = document.getElementById("structureView");
+            if (structureView) {
+                structureView.style.display = "none";
+            }
+        }
+
+        function showTableView() {
+            document.getElementById("welcome").style.display = "none";
+            document.getElementById("tableView").style.display = "block";
+            var structureView = document.getElementById("structureView");
+            if (structureView) {
+                structureView.style.display = "none";
+            }
+        }
+
+        function showSqlView() {
+            ensureSqlPaneVisible();
+        }
+
+        function showStructureView() {
+            document.getElementById("welcome").style.display = "none";
+            document.getElementById("tableView").style.display = "none";
+            if (sqlPaneFullscreen) {
+                sqlPaneFullscreen = false;
+                sqlPaneCollapsed = true;
+                applySplitLayout();
+            }
+            var structureView = document.getElementById("structureView");
+            if (structureView) {
+                structureView.style.display = "block";
+            }
+        }
+
+        function initSplitLayout() {
+            var container = document.getElementById("splitContainer");
+            if (!container) { return; }
+            var height = container.offsetHeight;
+            if (height <= 0) { return; }
+            var headerHeight = getSqlHeaderHeight();
+            var minHeight = headerHeight + 80;
+            sqlPaneHeight = Math.max(minHeight, Math.round(height * sqlDefaultRatio));
+            sqlPaneLastHeight = sqlPaneHeight;
+            applySplitLayout();
+
+            var handle = document.getElementById("sqlResizeHandle");
+            if (handle) {
+                handle.onmousedown = function (evt) {
+                    startSqlResize(evt);
+                    return false;
+                };
+            }
+            window.onresize = function () {
+                applySplitLayout();
+            };
+        }
+
+        function getSqlHeaderHeight() {
+            var header = document.getElementById("sqlHeader");
+            return header ? header.offsetHeight : 28;
+        }
+
+        function applySplitLayout() {
+            var container = document.getElementById("splitContainer");
+            if (!container) { return; }
+            var totalHeight = container.offsetHeight;
+            var tablePane = document.getElementById("tablePane");
+            var sqlPane = document.getElementById("sqlPane");
+            var sqlBody = document.getElementById("sqlBody");
+            var handle = document.getElementById("sqlResizeHandle");
+            var handleHeight = handle ? handle.offsetHeight : 6;
+            if (!handleHeight || handleHeight <= 0) {
+                handleHeight = 6;
+            }
+            var headerHeight = getSqlHeaderHeight();
+            var minHeight = headerHeight + 80;
+            var maxHeight = Math.max(minHeight, totalHeight - 80);
+            var height = sqlPaneHeight;
+
+            if (sqlPaneFullscreen) {
+                height = totalHeight;
+            } else if (sqlPaneCollapsed) {
+                height = headerHeight;
+            } else {
+                if (height < minHeight) { height = minHeight; }
+                if (height > maxHeight) { height = maxHeight; }
+                sqlPaneHeight = height;
+            }
+
+            if (sqlPane) {
+                sqlPane.style.height = height + "px";
+                sqlPane.style.bottom = "0px";
+            }
+            if (sqlBody) {
+                sqlBody.style.display = sqlPaneCollapsed ? "none" : "block";
+            }
+            if (sqlPaneFullscreen) {
+                if (tablePane) { tablePane.style.display = "none"; }
+                if (handle) { handle.style.display = "none"; }
+            } else {
+                if (tablePane) { tablePane.style.display = "block"; }
+                if (handle) {
+                    handle.style.display = sqlPaneCollapsed ? "none" : "block";
+                }
+                var handleOffset = (handle && !sqlPaneCollapsed) ? handleHeight : 0;
+                if (tablePane) {
+                    tablePane.style.bottom = (height + handleOffset) + "px";
+                }
+                if (handle && !sqlPaneCollapsed) {
+                    handle.style.top = (totalHeight - height - handleHeight) + "px";
+                }
+            }
+            updateSqlPaneControls();
+        }
+
+        function startSqlResize(evt) {
+            if (sqlPaneCollapsed || sqlPaneFullscreen) { return; }
+            evt = evt || window.event;
+            var startY = evt.clientY;
+            var startHeight = sqlPaneHeight;
+            document.onmousemove = function (e) {
+                e = e || window.event;
+                var delta = startY - e.clientY;
+                sqlPaneHeight = startHeight + delta;
+                applySplitLayout();
+            };
+            document.onmouseup = function () {
+                document.onmousemove = null;
+                document.onmouseup = null;
+                sqlPaneLastHeight = sqlPaneHeight;
+            };
+        }
+
+        function collapseSqlPane() {
+            if (sqlPaneCollapsed) { return; }
+            if (!sqlPaneFullscreen) {
+                sqlPaneLastHeight = sqlPaneHeight;
+            }
+            sqlPaneCollapsed = true;
+            sqlPaneFullscreen = false;
+            applySplitLayout();
+        }
+
+        function expandSqlPane() {
+            if (!sqlPaneCollapsed && !sqlPaneFullscreen) { return; }
+            sqlPaneCollapsed = false;
+            sqlPaneFullscreen = false;
+            if (sqlPaneLastHeight > 0) {
+                sqlPaneHeight = sqlPaneLastHeight;
+            } else {
+                var container = document.getElementById("splitContainer");
+                if (container) {
+                    sqlPaneHeight = Math.round(container.offsetHeight * sqlDefaultRatio);
+                }
+            }
+            applySplitLayout();
+        }
+
+        function fullscreenSqlPane() {
+            if (sqlPaneFullscreen) { return; }
+            if (!sqlPaneCollapsed) {
+                sqlPaneLastHeight = sqlPaneHeight;
+            }
+            sqlPaneFullscreen = true;
+            sqlPaneCollapsed = false;
+            applySplitLayout();
+        }
+
+        function ensureSqlPaneVisible() {
+            if (sqlPaneCollapsed) {
+                expandSqlPane();
+            }
+        }
+
+        function updateSqlPaneControls() {
+            setLinkEnabled("btnSqlCollapse", !sqlPaneCollapsed && !sqlPaneFullscreen);
+            setLinkEnabled("btnSqlExpand", sqlPaneCollapsed || sqlPaneFullscreen);
+            setLinkEnabled("btnSqlFull", !sqlPaneFullscreen);
+        }
+
+        function updateSqliteVersion() {
+            var label = document.getElementById("sqliteVersion");
+            if (!label) { return; }
+            if (!fso || !fso.FileExists(sqlitePath)) {
+                label.innerText = "SQLite: не найден";
+                return;
+            }
+            var res = runSqliteUtf8(":memory:", "SELECT sqlite_version();", { csv: true, noheader: true });
+            if (res.err) {
+                label.innerText = "SQLite: неизвестно";
+                return;
+            }
+            var rows = parseCsv(res.out);
+            if (rows.length > 0 && rows[0][0]) {
+                label.innerText = "SQLite: " + rows[0][0];
+            } else {
+                label.innerText = "SQLite: неизвестно";
+            }
+        }
+
+        function updateCurrentInfo() {
+            var dbLabel = document.getElementById("currentDbName");
+            var tableLabel = document.getElementById("currentTableName");
+            dbLabel.innerText = state.currentDb ? getFileName(state.currentDb) : "—";
+            tableLabel.innerText = state.currentTable ? state.currentTable : "—";
+        }
+
+        function updateActions() {
+            setLinkEnabled("btnRenameDb", !!state.currentDb);
+            setLinkEnabled("btnCopyDb", !!state.currentDb);
+            setLinkEnabled("btnDeleteDb", !!state.currentDb);
+            setLinkEnabled("btnRefreshDb", true);
+
+            setLinkEnabled("btnNewTable", !!state.currentDb);
+            setLinkEnabled("btnRenameTable", !!state.currentTable);
+            setLinkEnabled("btnModifyTable", !!state.currentTable);
+            setLinkEnabled("btnCopyTable", !!state.currentTable);
+            setLinkEnabled("btnDeleteTable", !!state.currentTable);
+            setLinkEnabled("btnSqlEditor", !!state.currentDb);
+
+            setLinkEnabled("btnSaveChanges", !!state.currentTable);
+            setLinkEnabled("btnAddRow", !!state.currentTable);
+            setLinkEnabled("btnReloadTable", !!state.currentTable);
+            setLinkEnabled("btnClearTable", !!state.currentTable);
+            setLinkEnabled("btnExportCsv", !!state.currentTable);
+            setLinkEnabled("btnImportCsv", !!state.currentTable);
+            setLinkEnabled("btnExportSql", !!state.currentTable);
+            setLinkEnabled("btnImportSql", !!state.currentTable);
+        }
+
+        function setLinkEnabled(id, enabled) {
+            var el = document.getElementById(id);
+            if (!el) { return; }
+            el.className = enabled ? "" : "disabled";
+        }
+
+        function getTables(dbPath) {
+            var sql = "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name;";
+            var res = runSqliteUtf8(dbPath, sql, { csv: true, noheader: true });
+            if (res.err) {
+                setStatus(res.err, true);
+                return [];
+            }
+            var rows = parseCsv(res.out);
+            var tables = [];
+            var i;
+            for (i = 0; i < rows.length; i++) {
+                if (rows[i][0]) {
+                    tables.push(rows[i][0]);
+                }
+            }
+            return tables;
+        }
+
+        function loadTableData(tableName) {
+            if (!state.currentDb || !tableName) {
+                showWelcome();
+                return;
+            }
+            showTableView();
+            setStatus("Загрузка таблицы...", false);
+
+            var pragmaSql = "PRAGMA table_info(" + quoteIdent(tableName) + ");";
+            var infoRes = runSqliteUtf8(state.currentDb, pragmaSql, { csv: true, header: true, nullvalue: NULL_SENTINEL });
+            if (infoRes.err) {
+                setStatus(infoRes.err, true);
+                return;
+            }
+            var infoRows = parseCsv(infoRes.out);
+            var tableInfo = parseTableInfo(infoRows);
+            state.currentColumns = tableInfo.columns;
+            state.currentColumnInfo = tableInfo.info;
+            state.currentColumnMap = tableInfo.map;
+
+            var whereSql = buildWhereClause();
+            var countSql = "SELECT COUNT(*) AS total FROM " + quoteIdent(tableName) + whereSql + ";";
+            var countRes = runSqliteUtf8(state.currentDb, countSql, { csv: true, header: true, nullvalue: NULL_SENTINEL });
+            if (countRes.err) {
+                setStatus(countRes.err, true);
+                return;
+            }
+            state.totalRows = parseCountResult(countRes.out);
+            if (pageRows <= 0) {
+                pageRows = 25;
+            }
+            state.totalPages = Math.max(1, Math.ceil(state.totalRows / pageRows));
+            if (state.pageIndex > state.totalPages - 1) {
+                state.pageIndex = state.totalPages - 1;
+            }
+            if (state.pageIndex < 0) {
+                state.pageIndex = 0;
+            }
+
+            var orderSql = buildOrderClause();
+            var limitSql = buildLimitClause();
+            var dataSql = "SELECT rowid AS __rowid, * FROM " + quoteIdent(tableName) + whereSql + orderSql + limitSql + ";";
+            var dataRes = runSqliteUtf8(state.currentDb, dataSql, { csv: true, header: true, nullvalue: NULL_SENTINEL });
+            if (dataRes.err) {
+                setStatus(dataRes.err, true);
+                renderTableError("Не удалось прочитать данные таблицы. Используйте SQL редактор.");
+                return;
+            }
+            var dataRows = parseCsv(dataRes.out);
+            renderTable(dataRows);
+            renderPager();
+            setStatus("Готово.", false);
+        }
+
+        function renderTable(rows) {
+            var view = document.getElementById("tableData");
+            view.innerHTML = "";
+            document.getElementById("tableTitle").innerText = "Таблица: " + state.currentTable;
+
+            var headers = [];
+            if (rows && rows.length > 0 && rows[0] && rows[0].length > 0) {
+                headers = rows[0];
+            } else {
+                headers = ["__rowid"].concat(state.currentColumns);
+            }
+            if (!headers || headers.length === 0) {
+                view.innerText = "Нет данных.";
+                return;
+            }
+
+            var dataColumns = [];
+            var i;
+            for (i = 0; i < headers.length; i++) {
+                if (headers[i] !== "__rowid") {
+                    dataColumns.push(headers[i]);
+                }
+            }
+            var hasData = rows && rows.length > 1;
+
+            var table = document.createElement("table");
+            table.className = "data-table";
+            var thead = document.createElement("thead");
+            var hRow = document.createElement("tr");
+            for (i = 0; i < headers.length; i++) {
+                var th = document.createElement("th");
+                th.innerText = formatHeaderLabel(headers[i]);
+                th.onclick = (function (colName) {
+                    return function () {
+                        toggleSort(colName);
+                    };
+                })(headers[i]);
+                hRow.appendChild(th);
+            }
+            var thAction = document.createElement("th");
+            thAction.innerText = "Действия";
+            hRow.appendChild(thAction);
+            thead.appendChild(hRow);
+
+            var filterRow = document.createElement("tr");
+            for (i = 0; i < headers.length; i++) {
+                var fth = document.createElement("th");
+                if (headers[i] !== "__rowid") {
+                    var input = document.createElement("input");
+                    input.setAttribute("data-filter-col", headers[i]);
+                    input.value = state.currentFilters[headers[i]] || "";
+                    input.onchange = function () {
+                        applyFiltersFromUi();
+                    };
+                    input.onkeydown = function (evt) {
+                        evt = evt || window.event;
+                        if (evt.keyCode === 13) {
+                            applyFiltersFromUi();
+                        }
+                    };
+                    fth.appendChild(input);
+                }
+                filterRow.appendChild(fth);
+            }
+            var filterAction = document.createElement("th");
+            filterRow.appendChild(filterAction);
+            thead.appendChild(filterRow);
+            table.appendChild(thead);
+
+            var tbody = document.createElement("tbody");
+            tbody.id = "tableBody";
+            if (hasData) {
+                var r;
+                for (r = 1; r < rows.length; r++) {
+                    var row = rows[r];
+                    var tr = document.createElement("tr");
+                    var rowid = "";
+                    for (i = 0; i < headers.length; i++) {
+                        var colName = headers[i];
+                        var td = document.createElement("td");
+                        var cellValue = row[i] !== undefined ? row[i] : "";
+
+                        if (colName === "__rowid") {
+                            rowid = cellValue;
+                            td.innerText = cellValue;
+                        } else {
+                        var input = createCellEditor(colName);
+                            if (cellValue === NULL_SENTINEL) {
+                                input.value = "";
+                                input.setAttribute("data-null", "1");
+                                td.className = "cell-null";
+                            } else {
+                                input.value = cellValue;
+                                input.setAttribute("data-null", "0");
+                            }
+                            input.setAttribute("data-col", colName);
+                            input.setAttribute("data-orig", cellValue);
+                            input.onchange = (function (rowEl, inputEl) {
+                                return function () {
+                                    var orig = inputEl.getAttribute("data-orig");
+                                    var current = inputEl.value;
+                                    if (orig === NULL_SENTINEL && current === "") {
+                                        inputEl.setAttribute("data-dirty", "0");
+                                    } else if (orig === current) {
+                                        inputEl.setAttribute("data-dirty", "0");
+                                    } else {
+                                        inputEl.setAttribute("data-dirty", "1");
+                                    }
+                                    toggleRowDirty(rowEl);
+                                };
+                            })(tr, input);
+                        input.oninput = input.onchange;
+                            td.appendChild(input);
+                        }
+                        tr.appendChild(td);
+                    }
+                    tr.setAttribute("data-rowid", rowid);
+                    var actionTd = document.createElement("td");
+                    var del = document.createElement("a");
+                    del.href = "#";
+                    del.innerText = "Удалить";
+                    del.onclick = (function (rid) {
+                        return function () {
+                            deleteRow(rid);
+                            return false;
+                        };
+                    })(rowid);
+                    actionTd.appendChild(del);
+                    tr.appendChild(actionTd);
+
+                    tbody.appendChild(tr);
+                }
+            } else {
+                var emptyRow = document.createElement("tr");
+                var emptyTd = document.createElement("td");
+                emptyTd.colSpan = headers.length + 1;
+                emptyTd.innerText = "Нет данных.";
+                emptyRow.appendChild(emptyTd);
+                tbody.appendChild(emptyRow);
+            }
+
+            table.appendChild(tbody);
+            view.appendChild(table);
+
+            renderNewRowBlock(dataColumns);
+        }
+
+        function renderTableError(message) {
+            var view = document.getElementById("tableData");
+            view.innerHTML = "";
+            var box = document.createElement("div");
+            box.className = "muted";
+            box.innerText = message;
+            view.appendChild(box);
+        }
+
+        function renderNewRowBlock(columns) {
+            var view = document.getElementById("tableData");
+            var block = document.createElement("div");
+            block.id = "newRowBlock";
+            var label = document.createElement("div");
+            label.className = "label";
+            label.innerText = "Новая строка (для NULL используйте значение NULL):";
+            block.appendChild(label);
+
+            var table = document.createElement("table");
+            table.className = "data-table";
+            var tr = document.createElement("tr");
+            var i;
+            for (i = 0; i < columns.length; i++) {
+                var td = document.createElement("td");
+                var input = createCellEditor(columns[i]);
+                input.setAttribute("data-col", columns[i]);
+                td.appendChild(input);
+                tr.appendChild(td);
+            }
+            table.appendChild(tr);
+            block.appendChild(table);
+            view.appendChild(block);
+        }
+
+        function createCellEditor(colName) {
+            var isText = isTextColumn(colName);
+            var el = document.createElement(isText ? "textarea" : "input");
+            if (!isText) {
+                el.type = "text";
+            } else {
+                el.rows = 2;
+            }
+            return el;
+        }
+
+        function isTextColumn(colName) {
+            var info = getColumnInfo(colName);
+            if (!info) { return false; }
+            var affinity = getAffinity(info.type);
+            return affinity === "text";
+        }
+
+        function getRowEditors(container) {
+            var list = [];
+            var inputs = container.getElementsByTagName("input");
+            var textareas = container.getElementsByTagName("textarea");
+            var i;
+            for (i = 0; i < inputs.length; i++) {
+                list.push(inputs[i]);
+            }
+            for (i = 0; i < textareas.length; i++) {
+                list.push(textareas[i]);
+            }
+            return list;
+        }
+
+        function toggleRowDirty(rowEl) {
+            var inputs = getRowEditors(rowEl);
+            var dirty = false;
+            var i;
+            for (i = 0; i < inputs.length; i++) {
+                if (inputs[i].getAttribute("data-dirty") === "1") {
+                    dirty = true;
+                    break;
+                }
+            }
+            rowEl.className = dirty ? "row-dirty" : "";
+        }
+
+        function formatHeaderLabel(colName) {
+            var label = colName === "__rowid" ? "rowid" : colName;
+            var normalized = normalizeSortColumn(colName);
+            if (state.sortColumn === normalized) {
+                label += state.sortDir === "DESC" ? " (desc)" : " (asc)";
+            }
+            return label;
+        }
+
+        function normalizeSortColumn(colName) {
+            if (colName === "__rowid") {
+                return "rowid";
+            }
+            return colName;
+        }
+
+        function toggleSort(colName) {
+            if (!state.currentTable || !colName) { return; }
+            var normalized = normalizeSortColumn(colName);
+            if (state.sortColumn !== normalized) {
+                state.sortColumn = normalized;
+                state.sortDir = "ASC";
+            } else if (state.sortDir === "ASC") {
+                state.sortDir = "DESC";
+            } else {
+                state.sortColumn = "";
+                state.sortDir = "ASC";
+            }
+            state.pageIndex = 0;
+            loadTableData(state.currentTable);
+        }
+
+        function clearSort() {
+            if (!state.currentTable) { return; }
+            state.sortColumn = "";
+            state.sortDir = "ASC";
+            state.pageIndex = 0;
+            loadTableData(state.currentTable);
+        }
+
+        function applyFiltersFromUi() {
+            if (!state.currentTable) { return; }
+            var inputs = document.getElementsByTagName("input");
+            var map = {};
+            var i;
+            for (i = 0; i < inputs.length; i++) {
+                var col = inputs[i].getAttribute("data-filter-col");
+                if (col) {
+                    map[col] = inputs[i].value;
+                }
+            }
+            state.currentFilters = map;
+            state.pageIndex = 0;
+            loadTableData(state.currentTable);
+        }
+
+        function clearFilters() {
+            if (!state.currentTable) { return; }
+            state.currentFilters = {};
+            state.pageIndex = 0;
+            loadTableData(state.currentTable);
+        }
+
+        function hasFilters() {
+            var key;
+            for (key in state.currentFilters) {
+                if (state.currentFilters.hasOwnProperty(key) && trim(state.currentFilters[key]) !== "") {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function gotoPage(index) {
+            if (!state.currentTable) { return; }
+            if (index < 0) { index = 0; }
+            if (index > state.totalPages - 1) { index = state.totalPages - 1; }
+            if (index < 0) { index = 0; }
+            state.pageIndex = index;
+            loadTableData(state.currentTable);
+        }
+
+        function renderPager() {
+            var info = document.getElementById("pageInfo");
+            var sizeInfo = document.getElementById("pageSizeInfo");
+            if (!info || !sizeInfo) { return; }
+            var currentPage = state.totalRows === 0 ? 1 : (state.pageIndex + 1);
+            var totalPages = state.totalPages;
+            info.innerText = "Страница " + currentPage + " из " + totalPages + " (всего " + state.totalRows + ")";
+            sizeInfo.innerText = "по " + pageRows + " строк";
+            setLinkEnabled("btnFirstPage", state.pageIndex > 0);
+            setLinkEnabled("btnPrevPage", state.pageIndex > 0);
+            setLinkEnabled("btnNextPage", state.pageIndex < state.totalPages - 1);
+            setLinkEnabled("btnLastPage", state.pageIndex < state.totalPages - 1);
+            setLinkEnabled("btnClearFilters", hasFilters());
+            setLinkEnabled("btnClearSort", !!state.sortColumn);
+        }
+
+        function saveTableChanges() {
+            if (!state.currentDb || !state.currentTable) { return; }
+            var tbody = document.getElementById("tableBody");
+            if (!tbody) { return; }
+            var rows = tbody.getElementsByTagName("tr");
+            var updates = 0;
+            var i;
+            for (i = 0; i < rows.length; i++) {
+                var row = rows[i];
+                var rowid = row.getAttribute("data-rowid");
+                if (!rowid) { continue; }
+                var inputs = getRowEditors(row);
+                var sets = [];
+                var j;
+                for (j = 0; j < inputs.length; j++) {
+                    if (inputs[j].getAttribute("data-dirty") === "1") {
+                        var col = inputs[j].getAttribute("data-col");
+                        var colInfo = getColumnInfo(col);
+                        var typeName = colInfo ? colInfo.type : "";
+                        sets.push(quoteIdent(col) + "=" + toSqlValueByType(inputs[j].value, typeName));
+                    }
+                }
+                if (sets.length > 0) {
+                    var sql = "UPDATE " + quoteIdent(state.currentTable) + " SET " + sets.join(", ") + " WHERE rowid=" + rowid + ";";
+                    var res = runSqlite(state.currentDb, sql, {});
+                    if (res.err) {
+                        setStatus(res.err, true);
+                        return;
+                    }
+                    updates++;
+                }
+            }
+            if (updates === 0) {
+                setStatus("Нет изменений для сохранения.", false);
+                return;
+            }
+            setStatus("Сохранено изменений: " + updates, false);
+            loadTableData(state.currentTable);
+        }
+
+        function insertNewRow() {
+            if (!state.currentDb || !state.currentTable) { return; }
+            var block = document.getElementById("newRowBlock");
+            if (!block) { return; }
+            var inputs = getRowEditors(block);
+            var cols = [];
+            var vals = [];
+            var i;
+            for (i = 0; i < inputs.length; i++) {
+                var col = inputs[i].getAttribute("data-col");
+                var colInfo = getColumnInfo(col);
+                var typeName = colInfo ? colInfo.type : "";
+                cols.push(quoteIdent(col));
+                vals.push(toSqlValueByType(inputs[i].value, typeName));
+            }
+            if (cols.length === 0) { return; }
+            var sql = "INSERT INTO " + quoteIdent(state.currentTable) + " (" + cols.join(", ") + ") VALUES (" + vals.join(", ") + ");";
+            var res = runSqlite(state.currentDb, sql, {});
+            if (res.err) {
+                setStatus(res.err, true);
+                return;
+            }
+            setStatus("Строка добавлена.", false);
+            loadTableData(state.currentTable);
+        }
+
+        function deleteRow(rowid) {
+            if (!state.currentDb || !state.currentTable) { return; }
+            if (!confirm("Удалить строку rowid=" + rowid + "?")) {
+                return;
+            }
+            var sql = "DELETE FROM " + quoteIdent(state.currentTable) + " WHERE rowid=" + rowid + ";";
+            var res = runSqlite(state.currentDb, sql, {});
+            if (res.err) {
+                setStatus(res.err, true);
+                return;
+            }
+            setStatus("Строка удалена.", false);
+            loadTableData(state.currentTable);
+        }
+
+        function reloadTable() {
+            if (state.currentTable) {
+                loadTableData(state.currentTable);
+            }
+        }
+
+        function clearTableData() {
+            if (!state.currentDb || !state.currentTable) { return; }
+            if (!confirm("Очистить таблицу " + state.currentTable + "?")) {
+                return;
+            }
+            var sql = "DELETE FROM " + quoteIdent(state.currentTable) + ";";
+            var res = runSqlite(state.currentDb, sql, {});
+            if (res.err) {
+                setStatus(res.err, true);
+                return;
+            }
+            setStatus("Таблица очищена.", false);
+            loadTableData(state.currentTable);
+        }
+
+        function exportTableCsv() {
+            if (!state.currentDb || !state.currentTable) { return; }
+            var fileName = prompt("Имя CSV файла:", state.currentTable + ".csv");
+            if (!fileName) { return; }
+            var path = normalizeFilePath(fileName);
+            path = ensureExtension(path, ".csv");
+            var sql = "SELECT * FROM " + quoteIdent(state.currentTable) + ";";
+            var res = runSqliteUtf8(state.currentDb, sql, { csv: true, header: true, nullvalue: NULL_SENTINEL });
+            if (res.err) {
+                setStatus(res.err, true);
+                return;
+            }
+            var rows = parseCsv(res.out);
+            var csvText = buildCsv(rows, ";");
+            writeTextFileUtf8(path, csvText);
+            setStatus("CSV экспортирован: " + path, false);
+        }
+
+        function importTableCsv() {
+            if (!state.currentDb || !state.currentTable) { return; }
+            var fileName = prompt("Путь к CSV файлу:", "");
+            if (!fileName) { return; }
+            var path = normalizeFilePath(fileName);
+            if (!fso.FileExists(path)) {
+                alert("Файл не найден.");
+                return;
+            }
+            var hasHeader = confirm("Первая строка содержит заголовки?");
+            var clear = confirm("Очистить таблицу перед импортом?");
+            var useSemicolon = confirm("Разделитель точка с запятой ';'?");
+            var importPath = path;
+            var tempPath = "";
+            if (hasHeader) {
+                tempPath = createCsvWithoutHeader(path);
+                if (!tempPath) {
+                    alert("Не удалось подготовить CSV.");
+                    return;
+                }
+                importPath = tempPath;
+            }
+            var script = "";
+            if (clear) {
+                script += "DELETE FROM " + quoteIdent(state.currentTable) + ";\r\n";
+            }
+            script += ".mode csv\r\n";
+            if (useSemicolon) {
+                script += ".separator ;\r\n";
+            }
+            script += ".import " + quoteSqlitePath(importPath) + " " + quoteImportTableName(state.currentTable) + "\r\n";
+            var res = runSqlite(state.currentDb, script, {});
+            if (tempPath) {
+                try { fso.DeleteFile(tempPath, true); } catch (e) { }
+            }
+            if (res.err) {
+                setStatus(res.err, true);
+                return;
+            }
+            setStatus("CSV импортирован.", false);
+            loadTableData(state.currentTable);
+        }
+
+        function exportTableSql() {
+            if (!state.currentDb || !state.currentTable) { return; }
+            var fileName = prompt("Имя SQL файла:", state.currentTable + ".sql");
+            if (!fileName) { return; }
+            var path = normalizeFilePath(fileName);
+            path = ensureExtension(path, ".sql");
+            var script = ".dump " + quoteDumpName(state.currentTable) + "\r\n";
+            var res = runSqliteToFile(state.currentDb, script, path, {});
+            if (res.err) {
+                setStatus(res.err, true);
+                return;
+            }
+            setStatus("SQL экспортирован: " + path, false);
+        }
+
+        function importTableSql() {
+            if (!state.currentDb) { return; }
+            var fileName = prompt("Путь к SQL файлу:", "");
+            if (!fileName) { return; }
+            var path = normalizeFilePath(fileName);
+            if (!fso.FileExists(path)) {
+                alert("Файл не найден.");
+                return;
+            }
+            var script = ".read " + quoteSqlitePath(path) + "\r\n";
+            var res = runSqlite(state.currentDb, script, {});
+            if (res.err) {
+                setStatus(res.err, true);
+                return;
+            }
+            setStatus("SQL импортирован.", false);
+            refreshAll();
+        }
+
+        function normalizeFilePath(path) {
+            var text = trim(path);
+            if (text.indexOf("\\") === -1 && text.indexOf("/") === -1) {
+                text = appDir + "\\" + text;
+            }
+            return text;
+        }
+
+        function ensureExtension(path, ext) {
+            var lower = path.toLowerCase();
+            if (lower.lastIndexOf(ext) !== lower.length - ext.length) {
+                return path + ext;
+            }
+            return path;
+        }
+
+        function quoteImportTableName(name) {
+            if (/[^A-Za-z0-9_]/.test(name)) {
+                return "\"" + String(name).replace(/"/g, "\"\"") + "\"";
+            }
+            return name;
+        }
+
+        function quoteDumpName(name) {
+            var text = String(name || "").replace(/"/g, "\"\"");
+            return "\"" + text + "\"";
+        }
+
+        function createCsvWithoutHeader(path) {
+            try {
+                var text = readTextFileUtf8(path);
+                if (!text) {
+                    return "";
+                }
+                var lines = text.split(/\r?\n/);
+                lines.shift();
+                var newText = lines.join("\r\n");
+                var tempPath = getFixedTempFilePath("__sqlite_import_temp__.csv");
+                writeTextFileUtf8NoBom(tempPath, newText);
+                return tempPath;
+            } catch (e) {
+                return "";
+            }
+        }
+
+        function buildWhereClause() {
+            var conditions = [];
+            var i;
+            for (i = 0; i < state.currentColumns.length; i++) {
+                var col = state.currentColumns[i];
+                var raw = state.currentFilters[col];
+                if (raw === undefined || raw === null) {
+                    continue;
+                }
+                var text = trim(raw);
+                if (text === "") {
+                    continue;
+                }
+                var parsed = parseFilter(text);
+                var op = parsed.op;
+                var value = parsed.value;
+                if (value === "") {
+                    continue;
+                }
+                var upper = value.toUpperCase();
+                var colExpr = quoteIdent(col);
+                var colInfo = getColumnInfo(col);
+                var typeName = colInfo ? colInfo.type : "";
+                var affinity = getAffinity(typeName);
+
+                if (upper === "NULL") {
+                    if (op === "" || op === "=") {
+                        conditions.push(colExpr + " IS NULL");
+                    } else if (op === "!=" || op === "<>") {
+                        conditions.push(colExpr + " IS NOT NULL");
+                    } else {
+                        conditions.push(colExpr + " IS NULL");
+                    }
+                    continue;
+                }
+
+                if (op === "") {
+                    if (affinity === "text") {
+                        conditions.push(colExpr + " LIKE " + quoteLikeValue(value));
+                    } else if (affinity === "integer" || affinity === "real" || affinity === "numeric") {
+                        if (isNumericString(value)) {
+                            conditions.push(colExpr + "=" + value);
+                        } else {
+                            conditions.push(colExpr + " LIKE " + quoteLikeValue(value));
+                        }
+                    } else {
+                        conditions.push(colExpr + " LIKE " + quoteLikeValue(value));
+                    }
+                } else {
+                    var literal = buildLiteralForFilter(value, affinity, typeName);
+                    conditions.push(colExpr + " " + op + " " + literal);
+                }
+            }
+            if (conditions.length > 0) {
+                return " WHERE " + conditions.join(" AND ");
+            }
+            return "";
+        }
+
+        function buildOrderClause() {
+            if (!state.sortColumn) {
+                return "";
+            }
+            var dir = state.sortDir === "DESC" ? "DESC" : "ASC";
+            var col = state.sortColumn === "rowid" ? "rowid" : quoteIdent(state.sortColumn);
+            return " ORDER BY " + col + " " + dir;
+        }
+
+        function buildLimitClause() {
+            if (pageRows <= 0) {
+                return "";
+            }
+            var offset = state.pageIndex * pageRows;
+            if (offset < 0) {
+                offset = 0;
+            }
+            return " LIMIT " + pageRows + " OFFSET " + offset;
+        }
+
+        function parseFilter(text) {
+            var ops = ["<>", "!=", ">=", "<=", "=", ">", "<"];
+            var i;
+            for (i = 0; i < ops.length; i++) {
+                if (text.indexOf(ops[i]) === 0) {
+                    return { op: ops[i], value: trim(text.substring(ops[i].length)) };
+                }
+            }
+            return { op: "", value: text };
+        }
+
+        function buildLiteralForFilter(value, affinity, typeName) {
+            if (affinity === "integer" || affinity === "real" || affinity === "numeric") {
+                if (isNumericString(value)) {
+                    return value;
+                }
+            }
+            return toSqlValueByType(value, typeName);
+        }
+
+        function quoteLikeValue(value) {
+            var text = String(value).replace(/\*/g, "%");
+            text = text.replace(/'/g, "''");
+            if (text.indexOf("%") === -1 && text.indexOf("_") === -1) {
+                text = "%" + text + "%";
+            }
+            return "'" + text + "'";
+        }
+
+        function createDatabase() {
+            var name = prompt("Имя новой базы (без расширения или с .sqlite):", "");
+            if (!name) { return; }
+            if (name.toLowerCase().indexOf(".sqlite") === -1) {
+                name += ".sqlite";
+            }
+            var path = appDir + "\\" + name;
+            if (fso.FileExists(path)) {
+                alert("Файл уже существует.");
+                return;
+            }
+            var res = runSqlite(path, "VACUUM;", {});
+            if (res.err) {
+                setStatus(res.err, true);
+                return;
+            }
+            refreshDbList();
+            selectDb(path);
+        }
+
+        function renameDatabase() {
+            if (!state.currentDb) { return; }
+            var currentName = getFileName(state.currentDb);
+            var newName = prompt("Новое имя базы:", currentName);
+            if (!newName) { return; }
+            if (newName.toLowerCase().indexOf(".sqlite") === -1) {
+                newName += ".sqlite";
+            }
+            var newPath = appDir + "\\" + newName;
+            if (fso.FileExists(newPath)) {
+                alert("Файл с таким именем уже существует.");
+                return;
+            }
+            fso.MoveFile(state.currentDb, newPath);
+            state.currentDb = newPath;
+            refreshDbList();
+        }
+
+        function copyDatabase() {
+            if (!state.currentDb) { return; }
+            var currentName = getFileName(state.currentDb);
+            var newName = prompt("Имя копии базы:", "copy_" + currentName);
+            if (!newName) { return; }
+            if (newName.toLowerCase().indexOf(".sqlite") === -1) {
+                newName += ".sqlite";
+            }
+            var newPath = appDir + "\\" + newName;
+            if (fso.FileExists(newPath)) {
+                alert("Файл с таким именем уже существует.");
+                return;
+            }
+            fso.CopyFile(state.currentDb, newPath);
+            refreshDbList();
+        }
+
+        function deleteDatabase() {
+            if (!state.currentDb) { return; }
+            if (!confirm("Удалить базу " + getFileName(state.currentDb) + "?")) {
+                return;
+            }
+            fso.DeleteFile(state.currentDb, true);
+            state.currentDb = null;
+            state.currentTable = null;
+            refreshDbList();
+            showWelcome();
+        }
+
+        function createTable() {
+            if (!state.currentDb) {
+                setStatus("Выберите базу для создания таблицы.", true);
+                return;
+            }
+            openTableDesigner("create", "");
+        }
+
+        function renameTable() {
+            if (!state.currentTable) { return; }
+            var newName = prompt("Новое имя таблицы:", state.currentTable);
+            if (!newName) { return; }
+            var sql = "ALTER TABLE " + quoteIdent(state.currentTable) + " RENAME TO " + quoteIdent(newName) + ";";
+            var res = runSqlite(state.currentDb, sql, {});
+            if (res.err) {
+                setStatus(res.err, true);
+                return;
+            }
+            state.currentTable = newName;
+            loadTablesForDb(state.currentDb);
+            loadTableData(newName);
+        }
+
+        function modifyTable() {
+            if (!state.currentTable) { return; }
+            openTableDesigner("modify", state.currentTable);
+        }
+
+        function openTableDesigner(mode, tableName) {
+            if (!state.currentDb) {
+                setStatus("Выберите базу для работы с таблицами.", true);
+                return;
+            }
+            tableDesignerMode = mode;
+            tableDesignerOriginal = tableName || "";
+            var title = document.getElementById("tableDesignerTitle");
+            var nameInput = document.getElementById("designerTableName");
+            var hint = document.getElementById("designerHint");
+            clearDesignerRows();
+
+            if (mode === "modify") {
+                title.innerText = "Модификация таблицы";
+                nameInput.value = tableName;
+                nameInput.disabled = true;
+                hint.innerText = "Ограничения NOT NULL/DEFAULT/PK сохраняются для существующих столбцов.";
+                var info = loadTableInfoForDesigner(tableName);
+                if (!info) { return; }
+                if (info.info.length === 0) {
+                    addDesignerRow(null);
+                } else {
+                    var i;
+                    for (i = 0; i < info.info.length; i++) {
+                        addDesignerRow({
+                            name: info.info[i].name,
+                            type: info.info[i].type,
+                            notnull: info.info[i].notnull,
+                            dflt: info.info[i].dflt,
+                            pk: info.info[i].pk,
+                            origName: info.info[i].name
+                        });
+                    }
+                }
+                loadDesignerIndexes(tableName);
+            } else {
+                title.innerText = "Создание таблицы";
+                nameInput.value = "";
+                nameInput.disabled = false;
+                hint.innerText = "Добавьте столбцы и сформируйте SQL для создания таблицы.";
+                addDesignerRow(null);
+                clearDesignerIndexes();
+            }
+
+            showStructureView();
+            if (!nameInput.disabled) {
+                nameInput.focus();
+            } else {
+                focusFirstDesignerInput();
+            }
+        }
+
+        function closeTableDesigner() {
+            tableDesignerMode = "";
+            tableDesignerOriginal = "";
+            if (state.currentTable) {
+                showTableView();
+            } else {
+                showWelcome();
+            }
+        }
+
+        function clearDesignerRows() {
+            var body = document.getElementById("designerColumnsBody");
+            if (body) {
+                body.innerHTML = "";
+            }
+        }
+
+        function focusFirstDesignerInput() {
+            var body = document.getElementById("designerColumnsBody");
+            if (!body) { return; }
+            var inputs = body.getElementsByTagName("input");
+            if (inputs.length > 0) {
+                inputs[0].focus();
+                return;
+            }
+            var selects = body.getElementsByTagName("select");
+            if (selects.length > 0) {
+                selects[0].focus();
+            }
+        }
+
+        function addDesignerRow(col) {
+            var body = document.getElementById("designerColumnsBody");
+            if (!body) { return; }
+            var data = col || {};
+            var tr = document.createElement("tr");
+            tr.setAttribute("data-orig", data.origName || "");
+            tr.setAttribute("data-notnull", data.notnull || "0");
+            tr.setAttribute("data-default", data.dflt || "");
+            tr.setAttribute("data-pk", data.pk || "0");
+
+            var nameTd = document.createElement("td");
+            var nameInput = document.createElement("input");
+            nameInput.className = "designer-input col-name";
+            nameInput.value = data.name || "";
+            nameTd.appendChild(nameInput);
+            tr.appendChild(nameTd);
+
+            var typeTd = document.createElement("td");
+            var typeSelect = createTypeSelect(data.type || "");
+            typeTd.appendChild(typeSelect);
+            tr.appendChild(typeTd);
+
+            var pkTd = document.createElement("td");
+            var pkInput = document.createElement("input");
+            pkInput.type = "checkbox";
+            pkInput.className = "designer-pk col-pk";
+            pkInput.checked = String(data.pk || "") !== "0" && data.pk !== "" && data.pk !== null;
+            pkTd.appendChild(pkInput);
+            tr.appendChild(pkTd);
+
+            var genTd = document.createElement("td");
+            var genInput = document.createElement("input");
+            genInput.className = "designer-gen-input col-gen";
+            genInput.value = data.genExpr || "";
+            genTd.appendChild(genInput);
+            var genSelect = document.createElement("select");
+            genSelect.className = "designer-gen-select col-gen-mode";
+            var vOpt = document.createElement("option");
+            vOpt.value = "VIRTUAL";
+            vOpt.innerText = "VIRTUAL";
+            genSelect.appendChild(vOpt);
+            var sOpt = document.createElement("option");
+            sOpt.value = "STORED";
+            sOpt.innerText = "STORED";
+            genSelect.appendChild(sOpt);
+            if (data.genMode) {
+                genSelect.value = data.genMode.toUpperCase() === "STORED" ? "STORED" : "VIRTUAL";
+            }
+            genTd.appendChild(genSelect);
+            tr.appendChild(genTd);
+
+            var actionTd = document.createElement("td");
+            var up = document.createElement("a");
+            up.href = "#";
+            up.innerText = "Вверх";
+            up.onclick = (function (rowEl) {
+                return function () {
+                    moveDesignerRow(rowEl, -1);
+                    return false;
+                };
+            })(tr);
+            actionTd.appendChild(up);
+            var space1 = document.createTextNode(" ");
+            actionTd.appendChild(space1);
+            var down = document.createElement("a");
+            down.href = "#";
+            down.innerText = "Вниз";
+            down.onclick = (function (rowEl) {
+                return function () {
+                    moveDesignerRow(rowEl, 1);
+                    return false;
+                };
+            })(tr);
+            actionTd.appendChild(down);
+            var space2 = document.createTextNode(" ");
+            actionTd.appendChild(space2);
+            var del = document.createElement("a");
+            del.href = "#";
+            del.innerText = "Удалить";
+            del.onclick = (function (rowEl) {
+                return function () {
+                    rowEl.parentNode.removeChild(rowEl);
+                    return false;
+                };
+            })(tr);
+            actionTd.appendChild(del);
+            tr.appendChild(actionTd);
+
+            body.appendChild(tr);
+        }
+
+        function createTypeSelect(currentType) {
+            var select = document.createElement("select");
+            select.className = "designer-input col-type";
+            var current = normalizeTypeForSelect(currentType);
+            var i;
+            for (i = 0; i < columnTypeOptions.length; i++) {
+                var opt = document.createElement("option");
+                opt.value = columnTypeOptions[i];
+                opt.innerText = columnTypeOptions[i];
+                if (current === columnTypeOptions[i]) {
+                    opt.selected = true;
+                }
+                select.appendChild(opt);
+            }
+            return select;
+        }
+
+        function normalizeTypeForSelect(type) {
+            var t = String(type || "").toUpperCase();
+            if (t.indexOf("INT") !== -1) {
+                return "INTEGER";
+            }
+            if (t.indexOf("CHAR") !== -1 || t.indexOf("CLOB") !== -1 || t.indexOf("TEXT") !== -1) {
+                return "TEXT";
+            }
+            if (t.indexOf("BLOB") !== -1) {
+                return "BLOB";
+            }
+            if (t.indexOf("REAL") !== -1 || t.indexOf("FLOA") !== -1 || t.indexOf("DOUB") !== -1) {
+                return "REAL";
+            }
+            if (t === "") {
+                return "TEXT";
+            }
+            return "NUMERIC";
+        }
+
+        function moveDesignerRow(rowEl, direction) {
+            if (!rowEl || !rowEl.parentNode) { return; }
+            var sibling = direction < 0 ? rowEl.previousSibling : rowEl.nextSibling;
+            if (!sibling) { return; }
+            if (direction < 0) {
+                rowEl.parentNode.insertBefore(rowEl, sibling);
+            } else {
+                rowEl.parentNode.insertBefore(sibling, rowEl);
+            }
+        }
+
+        function clearDesignerIndexes() {
+            var body = document.getElementById("designerIndexesBody");
+            if (body) {
+                body.innerHTML = "";
+            }
+            designerIndexOriginals = [];
+        }
+
+        function addDesignerIndexRow(index) {
+            var body = document.getElementById("designerIndexesBody");
+            if (!body) { return; }
+            var data = index || {};
+            var tr = document.createElement("tr");
+            tr.setAttribute("data-orig", data.origName || "");
+
+            var nameTd = document.createElement("td");
+            var nameInput = document.createElement("input");
+            nameInput.className = "designer-index-name col-index-name";
+            nameInput.value = data.name || "";
+            nameTd.appendChild(nameInput);
+            tr.appendChild(nameTd);
+
+            var fieldsTd = document.createElement("td");
+            var fieldsWrap = document.createElement("div");
+            fieldsWrap.className = "designer-index-fields";
+            fieldsTd.appendChild(fieldsWrap);
+            tr.appendChild(fieldsTd);
+            renderIndexFieldCheckboxes(fieldsWrap, getDesignerColumnNames(), data.columns || []);
+
+            var actionTd = document.createElement("td");
+            var del = document.createElement("a");
+            del.href = "#";
+            del.innerText = "Удалить";
+            del.onclick = (function (rowEl) {
+                return function () {
+                    rowEl.parentNode.removeChild(rowEl);
+                    return false;
+                };
+            })(tr);
+            actionTd.appendChild(del);
+            tr.appendChild(actionTd);
+
+            body.appendChild(tr);
+        }
+
+        function renderIndexFieldCheckboxes(container, columns, selected) {
+            container.innerHTML = "";
+            var selectedMap = {};
+            var i;
+            for (i = 0; i < selected.length; i++) {
+                selectedMap[selected[i]] = true;
+            }
+            for (i = 0; i < columns.length; i++) {
+                var label = document.createElement("label");
+                var checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.className = "col-index-col";
+                checkbox.value = columns[i];
+                checkbox.checked = !!selectedMap[columns[i]];
+                label.appendChild(checkbox);
+                label.appendChild(document.createTextNode(" " + columns[i]));
+                container.appendChild(label);
+            }
+        }
+
+        function getDesignerColumnNames() {
+            var names = [];
+            var body = document.getElementById("designerColumnsBody");
+            if (!body) { return names; }
+            var rows = body.getElementsByTagName("tr");
+            var i;
+            for (i = 0; i < rows.length; i++) {
+                var nameInput = rows[i].getElementsByClassName("col-name")[0];
+                if (!nameInput) { continue; }
+                var name = trim(nameInput.value);
+                if (name !== "") {
+                    names.push(name);
+                }
+            }
+            return names;
+        }
+
+        function refreshDesignerIndexColumns() {
+            var body = document.getElementById("designerIndexesBody");
+            if (!body) { return; }
+            var rows = body.getElementsByTagName("tr");
+            var columns = getDesignerColumnNames();
+            var i;
+            for (i = 0; i < rows.length; i++) {
+                var fieldsWrap = rows[i].getElementsByClassName("designer-index-fields")[0];
+                if (!fieldsWrap) { continue; }
+                var selected = [];
+                var checks = fieldsWrap.getElementsByClassName("col-index-col");
+                var j;
+                for (j = 0; j < checks.length; j++) {
+                    if (checks[j].checked) {
+                        selected.push(checks[j].value);
+                    }
+                }
+                renderIndexFieldCheckboxes(fieldsWrap, columns, selected);
+            }
+        }
+
+        function collectDesignerIndexes() {
+            var indexes = [];
+            var body = document.getElementById("designerIndexesBody");
+            if (!body) { return indexes; }
+            var rows = body.getElementsByTagName("tr");
+            var i;
+            for (i = 0; i < rows.length; i++) {
+                var nameInput = rows[i].getElementsByClassName("col-index-name")[0];
+                var fieldsWrap = rows[i].getElementsByClassName("designer-index-fields")[0];
+                if (!fieldsWrap) { continue; }
+                var checks = fieldsWrap.getElementsByClassName("col-index-col");
+                var cols = [];
+                var j;
+                for (j = 0; j < checks.length; j++) {
+                    if (checks[j].checked) {
+                        cols.push(checks[j].value);
+                    }
+                }
+                indexes.push({
+                    name: nameInput ? trim(nameInput.value) : "",
+                    columns: cols,
+                    origName: rows[i].getAttribute("data-orig") || ""
+                });
+            }
+            return indexes;
+        }
+
+        function loadTableInfoForDesigner(tableName) {
+            var sql = "PRAGMA table_info(" + quoteIdent(tableName) + ");";
+            var res = runSqliteUtf8(state.currentDb, sql, { csv: true, header: true, nullvalue: NULL_SENTINEL });
+            if (res.err) {
+                setStatus(res.err, true);
+                return null;
+            }
+            var info = parseTableInfo(parseCsv(res.out));
+            if (info.info.length === 0) {
+                var fallback = runSqlite(state.currentDb, sql, { csv: true, header: true, nullvalue: NULL_SENTINEL });
+                if (!fallback.err) {
+                    info = parseTableInfo(parseCsv(fallback.out));
+                }
+            }
+            return info;
+        }
+
+        function loadDesignerIndexes(tableName) {
+            clearDesignerIndexes();
+            var listSql = "PRAGMA index_list(" + quoteIdent(tableName) + ");";
+            var listRes = runSqliteUtf8(state.currentDb, listSql, { csv: true, header: true, nullvalue: NULL_SENTINEL });
+            if (listRes.err) {
+                return;
+            }
+            var rows = parseCsv(listRes.out);
+            if (rows.length === 0) {
+                return;
+            }
+            var header = rows[0];
+            var hasHeader = isHeaderRow(header, "name");
+            var nameIdx = hasHeader ? getHeaderIndex(header, "name") : 1;
+            var originIdx = hasHeader ? getHeaderIndex(header, "origin") : 3;
+            var i;
+            for (i = hasHeader ? 1 : 0; i < rows.length; i++) {
+                var row = rows[i];
+                if (!row || row.length <= nameIdx) {
+                    continue;
+                }
+                var idxName = row[nameIdx];
+                if (!idxName) { continue; }
+                var origin = originIdx >= 0 && row.length > originIdx ? row[originIdx] : "";
+                if (idxName.indexOf("sqlite_autoindex") === 0) {
+                    continue;
+                }
+                if (origin === "pk" || origin === "u") {
+                    continue;
+                }
+                var infoSql = "PRAGMA index_info(" + quoteIdent(idxName) + ");";
+                var infoRes = runSqliteUtf8(state.currentDb, infoSql, { csv: true, header: true, nullvalue: NULL_SENTINEL });
+                if (infoRes.err) {
+                    continue;
+                }
+                var infoRows = parseCsv(infoRes.out);
+                var infoHeader = infoRows.length > 0 ? infoRows[0] : [];
+                var infoHasHeader = isHeaderRow(infoHeader, "name");
+                var colIdx = infoHasHeader ? getHeaderIndex(infoHeader, "name") : 2;
+                var cols = [];
+                var j;
+                for (j = infoHasHeader ? 1 : 0; j < infoRows.length; j++) {
+                    var infoRow = infoRows[j];
+                    if (!infoRow || infoRow.length <= colIdx) { continue; }
+                    if (infoRow[colIdx]) {
+                        cols.push(infoRow[colIdx]);
+                    }
+                }
+                designerIndexOriginals.push(idxName);
+                addDesignerIndexRow({ name: idxName, columns: cols, origName: idxName });
+            }
+        }
+
+        function isHeaderRow(row, value) {
+            if (!row || row.length === 0) { return false; }
+            var i;
+            for (i = 0; i < row.length; i++) {
+                if (normalizeHeader(row[i]) === value) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function getHeaderIndex(row, value) {
+            var i;
+            for (i = 0; i < row.length; i++) {
+                if (normalizeHeader(row[i]) === value) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        function submitTableDesigner() {
+            var nameInput = document.getElementById("designerTableName");
+            var tableName = trim(nameInput.value);
+            if (tableDesignerMode === "modify") {
+                tableName = tableDesignerOriginal;
+            }
+            if (!tableName) {
+                alert("Укажите имя таблицы.");
+                return;
+            }
+            var columns = collectDesignerColumns();
+            if (columns === null) {
+                return;
+            }
+            if (columns.length === 0) {
+                alert("Добавьте хотя бы один столбец.");
+                return;
+            }
+            columns = applySafeColumnNames(columns);
+            var indexes = collectDesignerIndexes();
+            var sql = "";
+            if (tableDesignerMode === "modify") {
+                sql = buildModifyTableSql(tableName, columns);
+            } else {
+                sql = buildCreateTableSql(tableName, columns);
+            }
+            var indexSql = buildIndexSql(tableName, indexes, columns, tableDesignerMode === "modify");
+            if (indexSql) {
+                sql += "\r\n" + indexSql;
+            }
+            closeTableDesigner();
+            openSqlEditor(sql);
+        }
+
+        function collectDesignerColumns() {
+            var body = document.getElementById("designerColumnsBody");
+            if (!body) { return []; }
+            var rows = body.getElementsByTagName("tr");
+            var columns = [];
+            var used = {};
+            var i;
+            for (i = 0; i < rows.length; i++) {
+                var nameInput = rows[i].getElementsByClassName("col-name")[0];
+                var typeSelect = rows[i].getElementsByClassName("col-type")[0];
+                var pkInput = rows[i].getElementsByClassName("col-pk")[0];
+                var genInput = rows[i].getElementsByClassName("col-gen")[0];
+                var genModeSelect = rows[i].getElementsByClassName("col-gen-mode")[0];
+                if (!nameInput || !typeSelect) { continue; }
+                var name = trim(nameInput.value);
+                if (name === "") { continue; }
+                var key = name.toLowerCase();
+                if (used[key]) {
+                    alert("Дубликат имени столбца: " + name);
+                    return null;
+                }
+                used[key] = true;
+                var pkChecked = pkInput && pkInput.checked;
+                var pkValue = pkChecked ? "1" : "0";
+                var pkData = parseInt(rows[i].getAttribute("data-pk"), 10);
+                var pkOrder = pkChecked ? ((pkData && pkData > 0) ? pkData : (i + 1)) : 0;
+                var genExpr = genInput ? trim(genInput.value) : "";
+                var genMode = genModeSelect ? genModeSelect.value : "";
+                columns.push({
+                    name: name,
+                    type: trim(typeSelect.value),
+                    notnull: rows[i].getAttribute("data-notnull") || "0",
+                    dflt: rows[i].getAttribute("data-default") || "",
+                    pk: pkValue,
+                    pkOrder: pkOrder,
+                    origName: rows[i].getAttribute("data-orig") || "",
+                    genExpr: genExpr,
+                    genMode: genMode
+                });
+            }
+            return columns;
+        }
+
+        function buildCreateTableSql(tableName, columns) {
+            var pkCols = [];
+            var i;
+            for (i = 0; i < columns.length; i++) {
+                var pk = parseInt(columns[i].pk, 10);
+                if (!isNaN(pk) && pk > 0) {
+                    var order = columns[i].pkOrder && columns[i].pkOrder > 0 ? columns[i].pkOrder : pk;
+                    pkCols.push({ name: getSafeColumnName(columns[i]), order: order });
+                }
+            }
+            pkCols.sort(function (a, b) { return a.order - b.order; });
+            var singlePk = pkCols.length === 1;
+            var lines = [];
+            for (i = 0; i < columns.length; i++) {
+                lines.push("    " + buildColumnDefinition(columns[i], singlePk));
+            }
+            if (pkCols.length > 1) {
+                var pkNames = [];
+                for (i = 0; i < pkCols.length; i++) {
+                    pkNames.push(quoteIdent(pkCols[i].name));
+                }
+                lines.push("    PRIMARY KEY (" + pkNames.join(", ") + ")");
+            }
+            return "CREATE TABLE " + quoteIdent(tableName) + " (\r\n" + lines.join(",\r\n") + "\r\n);";
+        }
+
+        function applySafeColumnNames(columns) {
+            var used = {};
+            var i;
+            for (i = 0; i < columns.length; i++) {
+                var original = trim(columns[i].name || "");
+                if (original === "") {
+                    original = "name" + (i + 1);
+                }
+                var safe = original;
+                var base = original;
+                var counter = 1;
+                while (used[safe.toLowerCase()]) {
+                    safe = base + "_" + counter;
+                    counter++;
+                }
+                used[safe.toLowerCase()] = true;
+                columns[i].safeName = safe;
+            }
+            return columns;
+        }
+
+        function sanitizeColumnName(name) {
+            var text = String(name || "");
+            var cleaned = text.replace(/[^A-Za-z0-9_]/g, "");
+            return cleaned;
+        }
+
+        function buildModifyTableSql(tableName, columns) {
+            var tempName = tableName + "_tmp";
+            var createSql = buildCreateTableSql(tempName, columns);
+            var insertCols = [];
+            var selectCols = [];
+            var i;
+            for (i = 0; i < columns.length; i++) {
+                insertCols.push(quoteIdent(getSafeColumnName(columns[i])));
+                if (columns[i].origName) {
+                    selectCols.push(quoteIdent(columns[i].origName));
+                } else {
+                    selectCols.push("NULL");
+                }
+            }
+            var sql = "";
+            sql += "BEGIN;\r\n";
+            sql += createSql + "\r\n";
+            sql += "-- Проверьте соответствие столбцов при необходимости.\r\n";
+            sql += "INSERT INTO " + quoteIdent(tempName) + " (" + insertCols.join(", ") + ") SELECT " + selectCols.join(", ") + " FROM " + quoteIdent(tableName) + ";\r\n";
+            sql += "DROP TABLE " + quoteIdent(tableName) + ";\r\n";
+            sql += "ALTER TABLE " + quoteIdent(tempName) + " RENAME TO " + quoteIdent(tableName) + ";\r\n";
+            sql += "COMMIT;";
+            return sql;
+        }
+
+        function buildIndexSql(tableName, indexes, columns, dropExisting) {
+            var statements = [];
+            var colMap = {};
+            var i;
+            for (i = 0; i < columns.length; i++) {
+                colMap[columns[i].name] = getSafeColumnName(columns[i]);
+            }
+            if (dropExisting) {
+                for (i = 0; i < designerIndexOriginals.length; i++) {
+                    statements.push("DROP INDEX IF EXISTS " + quoteIdent(designerIndexOriginals[i]) + ";");
+                }
+            }
+            var idxCounter = 1;
+            for (i = 0; i < indexes.length; i++) {
+                if (!indexes[i].columns || indexes[i].columns.length === 0) {
+                    continue;
+                }
+                var idxName = indexes[i].name;
+                if (!idxName) {
+                    idxName = "idx_" + sanitizeIndexName(tableName) + "_" + idxCounter;
+                    idxCounter++;
+                }
+                var cols = [];
+                var j;
+                for (j = 0; j < indexes[i].columns.length; j++) {
+                    var raw = indexes[i].columns[j];
+                    var safe = colMap[raw] || sanitizeColumnName(raw) || raw;
+                    cols.push(quoteIdent(safe));
+                }
+                statements.push("CREATE INDEX " + quoteIdent(idxName) + " ON " + quoteIdent(tableName) + " (" + cols.join(", ") + ");");
+            }
+            return statements.join("\r\n");
+        }
+
+        function sanitizeIndexName(name) {
+            var clean = sanitizeColumnName(name);
+            if (clean === "") {
+                clean = "idx";
+            }
+            return clean;
+        }
+
+        function buildColumnDefinition(col, singlePk) {
+            var parts = [];
+            parts.push(quoteIdent(getSafeColumnName(col)));
+            if (col.type) {
+                parts.push(col.type);
+            }
+            if (col.genExpr) {
+                parts.push("GENERATED ALWAYS AS (" + col.genExpr + ")");
+                if (col.genMode && col.genMode.toUpperCase() === "STORED") {
+                    parts.push("STORED");
+                } else {
+                    parts.push("VIRTUAL");
+                }
+            } else {
+                if (col.notnull === "1") {
+                    parts.push("NOT NULL");
+                }
+                if (col.dflt !== "" && col.dflt !== NULL_SENTINEL) {
+                    parts.push("DEFAULT " + col.dflt);
+                }
+                if (singlePk && parseInt(col.pk, 10) > 0) {
+                    parts.push("PRIMARY KEY");
+                }
+            }
+            return parts.join(" ");
+        }
+
+        function getSafeColumnName(col) {
+            return col.safeName || col.name;
+        }
+
+        function copyTable() {
+            if (!state.currentTable) { return; }
+            var newName = prompt("Имя копии таблицы:", "copy_" + state.currentTable);
+            if (!newName) { return; }
+            var sql = "CREATE TABLE " + quoteIdent(newName) + " AS SELECT * FROM " + quoteIdent(state.currentTable) + ";";
+            var res = runSqlite(state.currentDb, sql, {});
+            if (res.err) {
+                setStatus(res.err, true);
+                return;
+            }
+            loadTablesForDb(state.currentDb);
+        }
+
+        function deleteTable() {
+            if (!state.currentTable) { return; }
+            if (!confirm("Удалить таблицу " + state.currentTable + "?")) {
+                return;
+            }
+            var sql = "DROP TABLE " + quoteIdent(state.currentTable) + ";";
+            var res = runSqlite(state.currentDb, sql, {});
+            if (res.err) {
+                setStatus(res.err, true);
+                return;
+            }
+            state.currentTable = null;
+            loadTablesForDb(state.currentDb);
+            showWelcome();
+            updateCurrentInfo();
+            updateActions();
+        }
+
+        function openSqlEditor(sql) {
+            if (!state.currentDb) {
+                setStatus("Выберите базу для SQL редактора.", true);
+                return;
+            }
+            showSqlView();
+            if (sql) {
+                document.getElementById("sqlText").value = sql;
+            }
+            document.getElementById("sqlText").focus();
+        }
+
+        function clearSqlEditor() {
+            document.getElementById("sqlText").value = "";
+            document.getElementById("sqlOutput").innerText = "";
+            clearSqlResult();
+        }
+
+        function runSqlEditor() {
+            if (!state.currentDb) {
+                setStatus("Выберите базу для SQL редактора.", true);
+                return;
+            }
+            var sql = document.getElementById("sqlText").value;
+            if (trim(sql) === "") { return; }
+            var res = runSqliteUtf8(state.currentDb, sql, { csv: true, header: true, nullvalue: NULL_SENTINEL });
+            var output = "";
+            if (res.err) {
+                output = res.err;
+                clearSqlResult();
+            } else {
+                var rows = parseCsv(res.out);
+                setSqlResultFromRows(rows, res.out);
+                if (rows && rows.length > 0) {
+                    output = "Получено строк: " + (rows.length - 1);
+                } else {
+                    output = "Запрос выполнен.";
+                }
+            }
+            document.getElementById("sqlOutput").innerText = output;
+            loadTablesForDb(state.currentDb);
+        }
+
+        function clearSqlResult() {
+            sqlResultState.columns = [];
+            sqlResultState.rows = [];
+            sqlResultState.pageIndex = 0;
+            sqlResultState.totalPages = 0;
+            sqlResultState.totalRows = 0;
+            sqlResultState.rawCsv = "";
+            renderSqlResult();
+        }
+
+        function setSqlResultFromRows(rows, rawCsv) {
+            if (!rows || rows.length === 0) {
+                clearSqlResult();
+                return;
+            }
+            sqlResultState.columns = rows[0];
+            sqlResultState.rows = rows.slice(1);
+            sqlResultState.totalRows = sqlResultState.rows.length;
+            if (pageRows <= 0) {
+                pageRows = 25;
+            }
+            sqlResultState.totalPages = Math.max(1, Math.ceil(sqlResultState.totalRows / pageRows));
+            sqlResultState.pageIndex = 0;
+            sqlResultState.rawCsv = rawCsv || "";
+            renderSqlResult();
+        }
+
+        function renderSqlResult() {
+            var container = document.getElementById("sqlResultTable");
+            if (!container) { return; }
+            container.innerHTML = "";
+            if (!sqlResultState.columns || sqlResultState.columns.length === 0) {
+                container.innerText = "Нет данных.";
+                renderSqlResultPager();
+                return;
+            }
+            var table = document.createElement("table");
+            table.className = "data-table";
+            var thead = document.createElement("thead");
+            var hRow = document.createElement("tr");
+            var i;
+            for (i = 0; i < sqlResultState.columns.length; i++) {
+                var th = document.createElement("th");
+                th.innerText = sqlResultState.columns[i];
+                hRow.appendChild(th);
+            }
+            thead.appendChild(hRow);
+            table.appendChild(thead);
+
+            var tbody = document.createElement("tbody");
+            if (sqlResultState.totalRows === 0) {
+                var emptyRow = document.createElement("tr");
+                var emptyTd = document.createElement("td");
+                emptyTd.colSpan = sqlResultState.columns.length;
+                emptyTd.innerText = "Нет данных.";
+                emptyRow.appendChild(emptyTd);
+                tbody.appendChild(emptyRow);
+            } else {
+                var start = sqlResultState.pageIndex * pageRows;
+                var end = Math.min(start + pageRows, sqlResultState.totalRows);
+                var r;
+                for (r = start; r < end; r++) {
+                    var row = sqlResultState.rows[r];
+                    var tr = document.createElement("tr");
+                    for (i = 0; i < sqlResultState.columns.length; i++) {
+                        var td = document.createElement("td");
+                        var value = row[i] !== undefined ? row[i] : "";
+                        if (value === NULL_SENTINEL) {
+                            value = "NULL";
+                        }
+                        td.innerText = value;
+                        tr.appendChild(td);
+                    }
+                    tbody.appendChild(tr);
+                }
+            }
+            table.appendChild(tbody);
+            container.appendChild(table);
+            renderSqlResultPager();
+        }
+
+        function renderSqlResultPager() {
+            var info = document.getElementById("sqlPageInfo");
+            var sizeInfo = document.getElementById("sqlPageSizeInfo");
+            if (!info || !sizeInfo) { return; }
+            var totalPages = sqlResultState.totalPages;
+            var currentPage = totalPages === 0 ? 0 : (sqlResultState.pageIndex + 1);
+            info.innerText = "Страница " + currentPage + " из " + totalPages + " (всего " + sqlResultState.totalRows + ")";
+            sizeInfo.innerText = "по " + pageRows + " строк";
+            setLinkEnabled("btnSqlFirst", sqlResultState.pageIndex > 0);
+            setLinkEnabled("btnSqlPrev", sqlResultState.pageIndex > 0);
+            setLinkEnabled("btnSqlNext", sqlResultState.pageIndex < totalPages - 1);
+            setLinkEnabled("btnSqlLast", sqlResultState.pageIndex < totalPages - 1);
+            setLinkEnabled("btnExportSqlCsv", !!sqlResultState.rawCsv);
+        }
+
+        function gotoSqlPage(index) {
+            if (sqlResultState.totalPages <= 0) { return; }
+            if (index < 0) { index = 0; }
+            if (index > sqlResultState.totalPages - 1) { index = sqlResultState.totalPages - 1; }
+            sqlResultState.pageIndex = index;
+            renderSqlResult();
+        }
+
+        function exportSqlCsv() {
+            if (!sqlResultState.rawCsv) {
+                setStatus("Нет данных для экспорта.", true);
+                return;
+            }
+            var fileName = prompt("Имя CSV файла:", "result.csv");
+            if (!fileName) { return; }
+            if (fileName.toLowerCase().indexOf(".csv") === -1) {
+                fileName += ".csv";
+            }
+            var path = fileName.indexOf("\\") !== -1 ? fileName : (appDir + "\\" + fileName);
+            try {
+                var rows = parseCsv(sqlResultState.rawCsv);
+                var csvText = buildCsv(rows, ";");
+                writeTextFileUtf8(path, csvText);
+                setStatus("CSV сохранен: " + path, false);
+            } catch (e) {
+                setStatus("Ошибка сохранения CSV: " + e.message, true);
+            }
+        }
+
+        function runSqlite(dbPath, sql, options) {
+            return runSqliteWithScript(dbPath, sql, options, "", false);
+        }
+
+        function runSqliteUtf8(dbPath, sql, options) {
+            return runSqliteWithScript(dbPath, sql, options, getFixedTempFilePath("__sqlite_out_temp__.csv"), false);
+        }
+
+        function runSqliteToFile(dbPath, sql, filePath, options) {
+            return runSqliteWithScript(dbPath, sql, options, filePath, true);
+        }
+
+        function runSqliteWithScript(dbPath, sql, options, outputPath, keepOutput) {
+            if (!fso.FileExists(sqlitePath)) {
+                return { out: "", err: "sqlite3.exe не найден в каталоге приложения.", code: 1 };
+            }
+            var scriptPath = getFixedTempFilePath("__sqlite_sql_temp__.sql");
+            try {
+                if (fso.FileExists(scriptPath)) {
+                    fso.DeleteFile(scriptPath, true);
+                }
+            } catch (e) {
+            }
+            if (outputPath) {
+                try {
+                    if (fso.FileExists(outputPath)) {
+                        fso.DeleteFile(outputPath, true);
+                    }
+                } catch (e) {
+                }
+            }
+            writeTextFileUtf8NoBom(scriptPath, sql);
+            var args = [];
+            if (options) {
+                if (options.csv) { args.push("-cmd"); args.push(quoteCmdArg(".mode csv")); }
+                if (options.separator) { args.push("-cmd"); args.push(quoteCmdArg(".separator " + options.separator)); }
+                if (options.header) { args.push("-cmd"); args.push(quoteCmdArg(".headers on")); }
+                if (options.noheader) { args.push("-cmd"); args.push(quoteCmdArg(".headers off")); }
+                if (options.nullvalue) { args.push("-cmd"); args.push(quoteCmdArg(".nullvalue " + options.nullvalue)); }
+            }
+            if (outputPath) {
+                args.push("-cmd");
+                args.push(quoteCmdArg(".output " + quoteSqlitePath(outputPath)));
+            }
+            var readCmd = ".read " + quoteSqlitePath(scriptPath);
+            var cmd = quoteCmdArg(sqlitePath) + " " + args.join(" ") + " " + quoteCmdArg(dbPath) + " " + quoteCmdArg(readCmd);
+            var res = runCommand(cmd);
+            var outText = res.out;
+            if (outputPath && !keepOutput && fso.FileExists(outputPath)) {
+                outText = readTextFileUtf8(outputPath);
+                try {
+                    fso.DeleteFile(outputPath, true);
+                } catch (e) {
+                }
+            }
+            if (outputPath && !keepOutput) {
+                deleteStrayOutputFile(outputPath);
+                if (fso.FileExists(outputPath)) {
+                    scheduleTempDelete(outputPath);
+                }
+            }
+            try {
+                if (fso.FileExists(scriptPath)) {
+                    fso.DeleteFile(scriptPath, true);
+                }
+            } catch (e) {
+            }
+            return { out: outText, err: res.err, code: res.code };
+        }
+
+        function runCommand(command) {
+            try {
+                var exec = shell.Exec(command);
+                var out = exec.StdOut.ReadAll();
+                var err = exec.StdErr.ReadAll();
+                var code = exec.ExitCode;
+                return { out: out, err: err, code: code };
+            } catch (e) {
+                return { out: "", err: "Ошибка запуска команды: " + e.message, code: 1 };
+            }
+        }
+
+        function parseCsv(text) {
+            var rows = [];
+            if (!text) { return rows; }
+            var i = 0;
+            var field = "";
+            var row = [];
+            var inQuotes = false;
+            while (i < text.length) {
+                var ch = text.charAt(i);
+                if (inQuotes) {
+                    if (ch === "\"") {
+                        if (i + 1 < text.length && text.charAt(i + 1) === "\"") {
+                            field += "\"";
+                            i++;
+                        } else {
+                            inQuotes = false;
+                        }
+                    } else {
+                        field += ch;
+                    }
+                } else {
+                    if (ch === "\"") {
+                        inQuotes = true;
+                    } else if (ch === ",") {
+                        row.push(field);
+                        field = "";
+                    } else if (ch === "\r") {
+                    } else if (ch === "\n") {
+                        row.push(field);
+                        rows.push(row);
+                        row = [];
+                        field = "";
+                    } else {
+                        field += ch;
+                    }
+                }
+                i++;
+            }
+            if (field.length > 0 || row.length > 0) {
+                row.push(field);
+                rows.push(row);
+            }
+            return rows;
+        }
+
+        function buildCsv(rows, separator) {
+            var sep = separator || ",";
+            var lines = [];
+            var i;
+            for (i = 0; i < rows.length; i++) {
+                var row = rows[i] || [];
+                var cols = [];
+                var j;
+                for (j = 0; j < row.length; j++) {
+                    cols.push(escapeCsvValue(row[j], sep));
+                }
+                lines.push(cols.join(sep));
+            }
+            return lines.join("\r\n");
+        }
+
+        function escapeCsvValue(value, separator) {
+            if (value === NULL_SENTINEL || value === null || value === undefined) {
+                return "";
+            }
+            var text = String(value);
+            var needsQuotes = text.indexOf("\"") !== -1 || text.indexOf(separator) !== -1 || text.indexOf("\r") !== -1 || text.indexOf("\n") !== -1;
+            if (text.indexOf("\"") !== -1) {
+                text = text.replace(/"/g, "\"\"");
+            }
+            if (needsQuotes) {
+                return "\"" + text + "\"";
+            }
+            return text;
+        }
+
+        function parseCountResult(text) {
+            var rows = parseCsv(text);
+            if (rows.length > 1 && rows[1][0] !== undefined) {
+                var value = parseInt(rows[1][0], 10);
+                return isNaN(value) ? 0 : value;
+            }
+            return 0;
+        }
+
+        function parseTableInfo(infoRows) {
+            var columns = [];
+            var info = [];
+            var map = {};
+            var startIndex = 0;
+            if (infoRows.length > 0) {
+                var first0 = normalizeHeader(infoRows[0][0]);
+                var first1 = normalizeHeader(infoRows[0][1]);
+                if (first0 === "cid" || first1 === "name") {
+                    startIndex = 1;
+                }
+            }
+            var i;
+            for (i = startIndex; i < infoRows.length; i++) {
+                var row = infoRows[i];
+                if (!row) {
+                    continue;
+                }
+                var name = stripBom(row[1] || "");
+                if (!name) {
+                    continue;
+                }
+                var entry = {
+                    cid: row[0],
+                    name: name,
+                    type: row[2] || "",
+                    notnull: row[3] || "0",
+                    dflt: row[4] || "",
+                    pk: row[5] || "0"
+                };
+                columns.push(entry.name);
+                info.push(entry);
+                map[entry.name] = entry;
+            }
+            return { columns: columns, info: info, map: map };
+        }
+
+        function normalizeHeader(value) {
+            return stripBom(trim(value || "")).toLowerCase();
+        }
+
+        function stripBom(value) {
+            return String(value || "").replace(/^\uFEFF/, "");
+        }
+
+        function getColumnInfo(name) {
+            if (!state.currentColumnMap) {
+                return null;
+            }
+            return state.currentColumnMap[name] || null;
+        }
+
+        function quoteIdent(name) {
+            var safe = String(name).replace(/\]/g, "]]");
+            return "[" + safe + "]";
+        }
+
+        function toSqlValue(value) {
+            if (value === null || value === undefined) {
+                return "NULL";
+            }
+            var text = String(value);
+            if (text.toUpperCase() === "NULL") {
+                return "NULL";
+            }
+            return "'" + text.replace(/'/g, "''") + "'";
+        }
+
+        function toSqlValueByType(value, typeName) {
+            if (value === null || value === undefined) {
+                return "NULL";
+            }
+            var text = String(value);
+            var trimmed = trim(text);
+            var affinity = getAffinity(typeName);
+
+            if (trimmed === "") {
+                if (affinity === "text") {
+                    if (text === "") {
+                        return "''";
+                    }
+                    return "'" + text.replace(/'/g, "''") + "'";
+                }
+                return "NULL";
+            }
+
+            if (trimmed.toUpperCase() === "NULL") {
+                return "NULL";
+            }
+
+            if (affinity === "integer") {
+                if (isIntegerString(trimmed)) {
+                    return trimmed;
+                }
+                return "'" + text.replace(/'/g, "''") + "'";
+            }
+
+            if (affinity === "real") {
+                if (isNumericString(trimmed)) {
+                    return trimmed;
+                }
+                return "'" + text.replace(/'/g, "''") + "'";
+            }
+
+            if (affinity === "numeric") {
+                if (isNumericString(trimmed)) {
+                    return trimmed;
+                }
+                return "'" + text.replace(/'/g, "''") + "'";
+            }
+
+            if (affinity === "blob") {
+                var upper = trimmed.toUpperCase();
+                if (upper.indexOf("X'") === 0 && trimmed.charAt(trimmed.length - 1) === "'") {
+                    return trimmed;
+                }
+                return "'" + text.replace(/'/g, "''") + "'";
+            }
+
+            return "'" + text.replace(/'/g, "''") + "'";
+        }
+
+        function getAffinity(typeName) {
+            var t = String(typeName || "").toUpperCase();
+            if (t.indexOf("INT") !== -1) {
+                return "integer";
+            }
+            if (t.indexOf("CHAR") !== -1 || t.indexOf("CLOB") !== -1 || t.indexOf("TEXT") !== -1) {
+                return "text";
+            }
+            if (t.indexOf("BLOB") !== -1) {
+                return "blob";
+            }
+            if (t.indexOf("REAL") !== -1 || t.indexOf("FLOA") !== -1 || t.indexOf("DOUB") !== -1) {
+                return "real";
+            }
+            if (t === "") {
+                return "blob";
+            }
+            return "numeric";
+        }
+
+        function isIntegerString(value) {
+            return /^-?\d+$/.test(value);
+        }
+
+        function isNumericString(value) {
+            return /^-?\d+(\.\d+)?([eE][+-]?\d+)?$/.test(value) || /^-?\.\d+([eE][+-]?\d+)?$/.test(value);
+        }
+
+        function quoteCmdArg(arg) {
+            var text = String(arg).replace(/"/g, "\"\"");
+            return "\"" + text + "\"";
+        }
+
+        function quoteSqlitePath(path) {
+            var text = String(path).replace(/\\/g, "/").replace(/"/g, "\"\"");
+            return "\"" + text + "\"";
+        }
+
+        function getTempFilePath(prefix, ext) {
+            var folder = fso.GetSpecialFolder(2);
+            var name = prefix + (new Date().getTime()) + "_" + Math.floor(Math.random() * 100000) + (ext || "");
+            return folder.Path + "\\" + name;
+        }
+
+        function getFixedTempFilePath(fileName) {
+            var folder = fso.GetSpecialFolder(2);
+            return folder.Path + "\\" + fileName;
+        }
+
+        function readTextFileUtf8(path) {
+            try {
+                var stream = new ActiveXObject("ADODB.Stream");
+                stream.Type = 1;
+                stream.Open();
+                stream.LoadFromFile(path);
+                stream.Position = 0;
+                stream.Type = 2;
+                stream.Charset = "utf-8";
+                var text = stream.ReadText();
+                stream.Close();
+                return text;
+            } catch (e) {
+                try {
+                    var file = fso.OpenTextFile(path, 1);
+                    var content = file.ReadAll();
+                    file.Close();
+                    return content;
+                } catch (e2) {
+                    return "";
+                }
+            }
+        }
+
+        function writeTextFileUtf8(path, text) {
+            try {
+                var stream = new ActiveXObject("ADODB.Stream");
+                stream.Type = 2;
+                stream.Charset = "utf-8";
+                stream.Open();
+                stream.WriteText(String(text || ""));
+                stream.SaveToFile(path, 2);
+                stream.Close();
+            } catch (e) {
+                try {
+                    var file = fso.OpenTextFile(path, 2, true);
+                    file.Write(text);
+                    file.Close();
+                } catch (e2) {
+                }
+            }
+        }
+
+        function writeTextFileUtf8NoBom(path, text) {
+            try {
+                var stream = new ActiveXObject("ADODB.Stream");
+                stream.Type = 2;
+                stream.Charset = "utf-8";
+                stream.Open();
+                stream.WriteText(String(text || ""));
+                stream.Position = 0;
+                stream.Type = 1;
+                var bom = stream.Read(3);
+                var hasBom = false;
+                try {
+                    var bomArr = new VBArray(bom).toArray();
+                    if (bomArr.length === 3 && bomArr[0] === 239 && bomArr[1] === 187 && bomArr[2] === 191) {
+                        hasBom = true;
+                    }
+                } catch (e) {
+                }
+                if (!hasBom) {
+                    stream.Position = 0;
+                }
+                var bytes = stream.Read();
+                stream.Close();
+                var outStream = new ActiveXObject("ADODB.Stream");
+                outStream.Type = 1;
+                outStream.Open();
+                outStream.Write(bytes);
+                outStream.SaveToFile(path, 2);
+                outStream.Close();
+            } catch (e2) {
+                writeTextFileUtf8(path, text);
+            }
+        }
+
+        function scheduleTempDelete(path) {
+            window.setTimeout(function () {
+                try {
+                    if (fso.FileExists(path)) {
+                        fso.DeleteFile(path, true);
+                    }
+                } catch (e) {
+                }
+            }, 300);
+        }
+
+        function deleteStrayOutputFile(outPath) {
+            try {
+                var cleaned = String(outPath).replace(/[\\\/:]/g, "");
+                var cleanedNoDrive = cleaned.replace(/^[A-Za-z]/, "");
+                var stray1 = appDir + "\\" + cleaned;
+                var stray2 = appDir + "\\" + cleanedNoDrive;
+                if (fso.FileExists(stray1)) {
+                    fso.DeleteFile(stray1, true);
+                }
+                if (fso.FileExists(stray2)) {
+                    fso.DeleteFile(stray2, true);
+                }
+            } catch (e) {
+            }
+        }
+
+        function trim(text) {
+            return String(text).replace(/^\s+|\s+$/g, "");
+        }
+
+        function getFileName(path) {
+            var parts = path.split("\\");
+            return parts[parts.length - 1];
+        }
+
+        function containsName(list, name) {
+            var i;
+            for (i = 0; i < list.length; i++) {
+                if (list[i] === name) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function setStatus(text, isError) {
+            var el = document.getElementById("status");
+            el.innerText = text || "";
+            el.className = isError ? "error" : "";
+        }
+    </script>
+</head>
+<body>
+    <div id="loginOverlay">
+        <div id="loginBox">
+            <h2>SQLite Desk Studio v.1.1.2026</h2>
+            <div>Введите пароль:</div>
+            <input id="loginPassword" type="password">
+            <div class="actions">
+                <a id="btnLogin" href="#">Войти</a>
+                <a id="btnExit" href="#">Выход</a>
+            </div>
+            <div id="loginError"></div>
+        </div>
+    </div>
+    <div id="app">
+        <div id="sidebar">
+            <div id="logo">SQLite Desk Studio v.1.1.2026</div>
+            <div id="sqliteVersion" class="muted"></div>
+            <div id="dbActions">
+                <a id="btnNewDb" href="#">Создать базу</a>
+                <a id="btnRenameDb" href="#">Переименовать</a>
+                <a id="btnCopyDb" href="#">Копировать</a>
+                <a id="btnDeleteDb" href="#">Удалить</a>
+                <a id="btnRefreshDb" href="#">Обновить</a>
+            </div>
+            <div id="dbList"></div>
+        </div>
+
+        <div id="main">
+            <div id="topbar">
+                <div id="currentInfo">
+                    База: <span id="currentDbName">—</span>
+                    &nbsp;|&nbsp;
+                    Таблица: <span id="currentTableName">—</span>
+                </div>
+                <div id="topActions">
+                    <a id="btnRefreshAll" href="#">Обновить</a>
+                    <a id="btnNewTable" href="#">Создать таблицу</a>
+                    <a id="btnRenameTable" href="#">Переименовать</a>
+                    <a id="btnModifyTable" href="#">Модифицировать</a>
+                    <a id="btnCopyTable" href="#">Копировать</a>
+                    <a id="btnDeleteTable" href="#">Удалить</a>
+                    <a id="btnSqlEditor" href="#">SQL редактор</a>
+                </div>
+                <div id="status"></div>
+            </div>
+            <div id="content">
+                <div id="splitContainer">
+                    <div id="tablePane">
+                        <div id="tableScroll">
+                            <div id="welcome">
+                                Выберите базу и таблицу слева. Для структуры и сложных изменений используйте SQL редактор.
+                            </div>
+                            <div id="structureView">
+                                <div id="tableDesignerBox">
+                                    <h3 id="tableDesignerTitle">Редактор таблицы</h3>
+                                    <div id="tableDesignerForm">
+                                        Имя таблицы:
+                                        <input id="designerTableName" type="text">
+                                    </div>
+                                    <div id="designerHint" class="muted"></div>
+                                    <table id="designerColumnsTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Имя столбца</th>
+                                                <th>Тип данных</th>
+                                                <th>PK</th>
+                                                <th>Генерация</th>
+                                                <th>Действия</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="designerColumnsBody"></tbody>
+                                    </table>
+                                    <div id="designerIndexes">
+                                        <div class="label">Индексы:</div>
+                                        <table id="designerIndexesTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Имя индекса</th>
+                                                    <th>Поля</th>
+                                                    <th>Действия</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="designerIndexesBody"></tbody>
+                                        </table>
+                                        <div id="designerIndexActions">
+                                            <a id="btnDesignerAddIndex" href="#">Добавить индекс</a>
+                                            <a id="btnDesignerRefreshIndexCols" href="#">Обновить поля</a>
+                                        </div>
+                                    </div>
+                                    <div id="tableDesignerActions">
+                                        <a id="btnDesignerAddColumn" href="#">Добавить столбец</a>
+                                        <a id="btnDesignerGenerate" href="#">Сформировать SQL</a>
+                                        <a id="btnDesignerCancel" href="#">Отмена</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="tableView">
+                                <div id="tableTitle"></div>
+                                <div id="tableActions">
+                                    <a id="btnSaveChanges" href="#">Сохранить изменения</a>
+                                    <a id="btnAddRow" href="#">Добавить строку</a>
+                                    <a id="btnReloadTable" href="#">Перезагрузить</a>
+                                    <a id="btnClearTable" href="#">Очистить таблицу</a>
+                                    <a id="btnExportCsv" href="#">Экспорт CSV</a>
+                                    <a id="btnImportCsv" href="#">Импорт CSV</a>
+                                    <a id="btnExportSql" href="#">Экспорт SQL</a>
+                                    <a id="btnImportSql" href="#">Импорт SQL</a>
+                                </div>
+                                <div id="pager">
+                                    <a id="btnFirstPage" href="#">Первая</a>
+                                    <a id="btnPrevPage" href="#">Предыдущая</a>
+                                    <span id="pageInfo">Страница 0 из 0</span>
+                                    <a id="btnNextPage" href="#">Следующая</a>
+                                    <a id="btnLastPage" href="#">Последняя</a>
+                                    <span id="pageSizeInfo" class="muted">по 0 строк</span>
+                                    <a id="btnApplyFilters" href="#">Применить фильтр</a>
+                                    <a id="btnClearFilters" href="#">Сбросить фильтр</a>
+                                    <a id="btnClearSort" href="#">Сбросить сортировку</a>
+                                </div>
+                                <div id="tableData"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="sqlResizeHandle"></div>
+                    <div id="sqlPane">
+                        <div id="sqlHeader">
+                            SQL редактор (контекст текущей базы)
+                            <div id="sqlControls">
+                                <a id="btnSqlCollapse" href="#">Свернуть</a>
+                                <a id="btnSqlExpand" href="#">Развернуть</a>
+                                <a id="btnSqlFull" href="#">На весь экран</a>
+                            </div>
+                        </div>
+                        <div id="sqlBody">
+                            <div id="sqlEditorArea">
+                                <div class="muted">Подсказка: используйте [] для имен, NULL для пустых значений.</div>
+                                <textarea id="sqlText"></textarea>
+                                <div id="sqlEditorActions">
+                                    <a id="btnRunSql" href="#">Выполнить</a>
+                                    <a id="btnClearSql" href="#">Очистить</a>
+                                </div>
+                                <div id="sqlOutput"></div>
+                            </div>
+                            <div id="sqlResults">
+                                <div id="sqlResultPager">
+                                    <a id="btnSqlFirst" href="#">Первая</a>
+                                    <a id="btnSqlPrev" href="#">Предыдущая</a>
+                                    <span id="sqlPageInfo">Страница 0 из 0</span>
+                                    <a id="btnSqlNext" href="#">Следующая</a>
+                                    <a id="btnSqlLast" href="#">Последняя</a>
+                                    <span id="sqlPageSizeInfo" class="muted">по 0 строк</span>
+                                    <a id="btnExportSqlCsv" href="#">Экспорт в CSV</a>
+                                </div>
+                                <div id="sqlResultTable"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
