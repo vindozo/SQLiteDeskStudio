@@ -597,7 +597,7 @@
                 fso = new ActiveXObject("Scripting.FileSystemObject");
                 shell = new ActiveXObject("WScript.Shell");
             } catch (e) {
-                alert("ActiveX is not available: " + e.message);
+                alert("ActiveX не доступен: " + e.message);
                 return;
             }
 
@@ -714,7 +714,7 @@
                 showApp();
                 return;
             }
-            document.getElementById("loginError").innerText = "Incorrect password.";
+            document.getElementById("loginError").innerText = "Неверный пароль.";
         }
 
         function loadConfig() {
@@ -855,11 +855,11 @@
             if (state.dbs.length === 0) {
                 var empty = document.createElement("div");
                 empty.className = "muted";
-                empty.innerText = "No *.sqlite databases found.";
+                empty.innerText = "Баз данных *.sqlite не найдено.";
                 listEl.appendChild(empty);
                 var createLink = document.createElement("a");
                 createLink.href = "#";
-                createLink.innerText = "Create new database";
+                createLink.innerText = "Создать новую базу";
                 createLink.onclick = function () {
                     createDatabase();
                     return false;
@@ -937,11 +937,11 @@
                     if (tables.length === 0) {
                         var empty = document.createElement("div");
                         empty.className = "muted";
-                        empty.innerText = "No tables.";
+                        empty.innerText = "Таблиц нет.";
                         tableList.appendChild(empty);
                         var link = document.createElement("a");
                         link.href = "#";
-                        link.innerText = "Create table";
+                        link.innerText = "Создать таблицу";
                         link.onclick = function () {
                             createTable();
                             return false;
@@ -1173,19 +1173,19 @@
             var label = document.getElementById("sqliteVersion");
             if (!label) { return; }
             if (!fso || !fso.FileExists(sqlitePath)) {
-                label.innerText = "SQLite: not found";
+                label.innerText = "SQLite: не найден";
                 return;
             }
             var res = runSqliteUtf8(":memory:", "SELECT sqlite_version();", { csv: true, noheader: true });
             if (res.err) {
-                label.innerText = "SQLite: unknown";
+                label.innerText = "SQLite: неизвестно";
                 return;
             }
             var rows = parseCsv(res.out);
             if (rows.length > 0 && rows[0][0]) {
                 label.innerText = "SQLite: " + rows[0][0];
             } else {
-                label.innerText = "SQLite: unknown";
+                label.innerText = "SQLite: неизвестно";
             }
         }
 
@@ -1249,7 +1249,7 @@
                 return;
             }
             showTableView();
-            setStatus("Loading table...", false);
+            setStatus("Загрузка таблицы...", false);
 
             var pragmaSql = "PRAGMA table_info(" + quoteIdent(tableName) + ");";
             var infoRes = runSqliteUtf8(state.currentDb, pragmaSql, { csv: true, header: true, nullvalue: NULL_SENTINEL });
@@ -1288,19 +1288,19 @@
             var dataRes = runSqliteUtf8(state.currentDb, dataSql, { csv: true, header: true, nullvalue: NULL_SENTINEL });
             if (dataRes.err) {
                 setStatus(dataRes.err, true);
-                renderTableError("Failed to read table data. Use the SQL editor.");
+                renderTableError("Не удалось прочитать данные таблицы. Используйте SQL редактор.");
                 return;
             }
             var dataRows = parseCsv(dataRes.out);
             renderTable(dataRows);
             renderPager();
-            setStatus("Done.", false);
+            setStatus("Готово.", false);
         }
 
         function renderTable(rows) {
             var view = document.getElementById("tableData");
             view.innerHTML = "";
-            document.getElementById("tableTitle").innerText = "Table: " + state.currentTable;
+            document.getElementById("tableTitle").innerText = "Таблица: " + state.currentTable;
 
             var headers = [];
             if (rows && rows.length > 0 && rows[0] && rows[0].length > 0) {
@@ -1309,7 +1309,7 @@
                 headers = ["__rowid"].concat(state.currentColumns);
             }
             if (!headers || headers.length === 0) {
-                view.innerText = "No data.";
+                view.innerText = "Нет данных.";
                 return;
             }
 
@@ -1337,7 +1337,7 @@
                 hRow.appendChild(th);
             }
             var thAction = document.createElement("th");
-            thAction.innerText = "Actions";
+            thAction.innerText = "Действия";
             hRow.appendChild(thAction);
             thead.appendChild(hRow);
 
@@ -1417,7 +1417,7 @@
                     var actionTd = document.createElement("td");
                     var del = document.createElement("a");
                     del.href = "#";
-                    del.innerText = "Delete";
+                    del.innerText = "Удалить";
                     del.onclick = (function (rid) {
                         return function () {
                             deleteRow(rid);
@@ -1433,7 +1433,7 @@
                 var emptyRow = document.createElement("tr");
                 var emptyTd = document.createElement("td");
                 emptyTd.colSpan = headers.length + 1;
-                emptyTd.innerText = "No data.";
+                emptyTd.innerText = "Нет данных.";
                 emptyRow.appendChild(emptyTd);
                 tbody.appendChild(emptyRow);
             }
@@ -1459,7 +1459,7 @@
             block.id = "newRowBlock";
             var label = document.createElement("div");
             label.className = "label";
-            label.innerText = "New row (use NULL for null values):";
+            label.innerText = "Новая строка (для NULL используйте значение NULL):";
             block.appendChild(label);
 
             var table = document.createElement("table");
@@ -1611,8 +1611,8 @@
             if (!info || !sizeInfo) { return; }
             var currentPage = state.totalRows === 0 ? 1 : (state.pageIndex + 1);
             var totalPages = state.totalPages;
-            info.innerText = "Page " + currentPage + " of " + totalPages + " (total " + state.totalRows + ")";
-            sizeInfo.innerText = pageRows + " rows per page";
+            info.innerText = "Страница " + currentPage + " из " + totalPages + " (всего " + state.totalRows + ")";
+            sizeInfo.innerText = "по " + pageRows + " строк";
             setLinkEnabled("btnFirstPage", state.pageIndex > 0);
             setLinkEnabled("btnPrevPage", state.pageIndex > 0);
             setLinkEnabled("btnNextPage", state.pageIndex < state.totalPages - 1);
@@ -1654,10 +1654,10 @@
                 }
             }
             if (updates === 0) {
-                setStatus("No changes to save.", false);
+                setStatus("Нет изменений для сохранения.", false);
                 return;
             }
-            setStatus("Changes saved: " + updates, false);
+            setStatus("Сохранено изменений: " + updates, false);
             loadTableData(state.currentTable);
         }
 
@@ -1683,13 +1683,13 @@
                 setStatus(res.err, true);
                 return;
             }
-            setStatus("Row added.", false);
+            setStatus("Строка добавлена.", false);
             loadTableData(state.currentTable);
         }
 
         function deleteRow(rowid) {
             if (!state.currentDb || !state.currentTable) { return; }
-            if (!confirm("Delete row rowid=" + rowid + "?")) {
+            if (!confirm("Удалить строку rowid=" + rowid + "?")) {
                 return;
             }
             var sql = "DELETE FROM " + quoteIdent(state.currentTable) + " WHERE rowid=" + rowid + ";";
@@ -1698,7 +1698,7 @@
                 setStatus(res.err, true);
                 return;
             }
-            setStatus("Row deleted.", false);
+            setStatus("Строка удалена.", false);
             loadTableData(state.currentTable);
         }
 
@@ -1710,7 +1710,7 @@
 
         function clearTableData() {
             if (!state.currentDb || !state.currentTable) { return; }
-            if (!confirm("Clear table " + state.currentTable + "?")) {
+            if (!confirm("Очистить таблицу " + state.currentTable + "?")) {
                 return;
             }
             var sql = "DELETE FROM " + quoteIdent(state.currentTable) + ";";
@@ -1719,13 +1719,13 @@
                 setStatus(res.err, true);
                 return;
             }
-            setStatus("Table cleared.", false);
+            setStatus("Таблица очищена.", false);
             loadTableData(state.currentTable);
         }
 
         function exportTableCsv() {
             if (!state.currentDb || !state.currentTable) { return; }
-            var fileName = prompt("CSV file name:", state.currentTable + ".csv");
+            var fileName = prompt("Имя CSV файла:", state.currentTable + ".csv");
             if (!fileName) { return; }
             var path = normalizeFilePath(fileName);
             path = ensureExtension(path, ".csv");
@@ -1738,27 +1738,27 @@
             var rows = parseCsv(res.out);
             var csvText = buildCsv(rows, ";");
             writeTextFileUtf8(path, csvText);
-            setStatus("CSV exported: " + path, false);
+            setStatus("CSV экспортирован: " + path, false);
         }
 
         function importTableCsv() {
             if (!state.currentDb || !state.currentTable) { return; }
-            var fileName = prompt("Path to CSV file:", "");
+            var fileName = prompt("Путь к CSV файлу:", "");
             if (!fileName) { return; }
             var path = normalizeFilePath(fileName);
             if (!fso.FileExists(path)) {
-                alert("File not found.");
+                alert("Файл не найден.");
                 return;
             }
-            var hasHeader = confirm("Does the first row contain headers?");
-            var clear = confirm("Clear the table before import?");
-            var useSemicolon = confirm("Use semicolon ';' as delimiter?");
+            var hasHeader = confirm("Первая строка содержит заголовки?");
+            var clear = confirm("Очистить таблицу перед импортом?");
+            var useSemicolon = confirm("Разделитель точка с запятой ';'?");
             var importPath = path;
             var tempPath = "";
             if (hasHeader) {
                 tempPath = createCsvWithoutHeader(path);
                 if (!tempPath) {
-                    alert("Failed to prepare CSV.");
+                    alert("Не удалось подготовить CSV.");
                     return;
                 }
                 importPath = tempPath;
@@ -1780,13 +1780,13 @@
                 setStatus(res.err, true);
                 return;
             }
-            setStatus("CSV imported.", false);
+            setStatus("CSV импортирован.", false);
             loadTableData(state.currentTable);
         }
 
         function exportTableSql() {
             if (!state.currentDb || !state.currentTable) { return; }
-            var fileName = prompt("SQL file name:", state.currentTable + ".sql");
+            var fileName = prompt("Имя SQL файла:", state.currentTable + ".sql");
             if (!fileName) { return; }
             var path = normalizeFilePath(fileName);
             path = ensureExtension(path, ".sql");
@@ -1796,16 +1796,16 @@
                 setStatus(res.err, true);
                 return;
             }
-            setStatus("SQL exported: " + path, false);
+            setStatus("SQL экспортирован: " + path, false);
         }
 
         function importTableSql() {
             if (!state.currentDb) { return; }
-            var fileName = prompt("Path to SQL file:", "");
+            var fileName = prompt("Путь к SQL файлу:", "");
             if (!fileName) { return; }
             var path = normalizeFilePath(fileName);
             if (!fso.FileExists(path)) {
-                alert("File not found.");
+                alert("Файл не найден.");
                 return;
             }
             var script = ".read " + quoteSqlitePath(path) + "\r\n";
@@ -1814,7 +1814,7 @@
                 setStatus(res.err, true);
                 return;
             }
-            setStatus("SQL imported.", false);
+            setStatus("SQL импортирован.", false);
             refreshAll();
         }
 
@@ -1972,14 +1972,14 @@
         }
 
         function createDatabase() {
-            var name = prompt("New database name (without extension or with .sqlite):", "");
+            var name = prompt("Имя новой базы (без расширения или с .sqlite):", "");
             if (!name) { return; }
             if (name.toLowerCase().indexOf(".sqlite") === -1) {
                 name += ".sqlite";
             }
             var path = buildDbPath(name);
             if (fso.FileExists(path)) {
-                alert("File already exists.");
+                alert("Файл уже существует.");
                 return;
             }
             var res = runSqlite(path, "VACUUM;", {});
@@ -1994,14 +1994,14 @@
         function renameDatabase() {
             if (!state.currentDb) { return; }
             var currentName = getFileName(state.currentDb);
-            var newName = prompt("New database name:", currentName);
+            var newName = prompt("Новое имя базы:", currentName);
             if (!newName) { return; }
             if (newName.toLowerCase().indexOf(".sqlite") === -1) {
                 newName += ".sqlite";
             }
             var newPath = buildDbPath(newName);
             if (fso.FileExists(newPath)) {
-                alert("A file with this name already exists.");
+                alert("Файл с таким именем уже существует.");
                 return;
             }
             fso.MoveFile(state.currentDb, newPath);
@@ -2012,14 +2012,14 @@
         function copyDatabase() {
             if (!state.currentDb) { return; }
             var currentName = getFileName(state.currentDb);
-            var newName = prompt("Copy database name:", "copy_" + currentName);
+            var newName = prompt("Имя копии базы:", "copy_" + currentName);
             if (!newName) { return; }
             if (newName.toLowerCase().indexOf(".sqlite") === -1) {
                 newName += ".sqlite";
             }
             var newPath = buildDbPath(newName);
             if (fso.FileExists(newPath)) {
-                alert("A file with this name already exists.");
+                alert("Файл с таким именем уже существует.");
                 return;
             }
             fso.CopyFile(state.currentDb, newPath);
@@ -2028,7 +2028,7 @@
 
         function deleteDatabase() {
             if (!state.currentDb) { return; }
-            if (!confirm("Delete database " + getFileName(state.currentDb) + "?")) {
+            if (!confirm("Удалить базу " + getFileName(state.currentDb) + "?")) {
                 return;
             }
             fso.DeleteFile(state.currentDb, true);
@@ -2040,7 +2040,7 @@
 
         function createTable() {
             if (!state.currentDb) {
-                setStatus("Select a database to create a table.", true);
+                setStatus("Выберите базу для создания таблицы.", true);
                 return;
             }
             openTableDesigner("create", "");
@@ -2048,7 +2048,7 @@
 
         function renameTable() {
             if (!state.currentTable) { return; }
-            var newName = prompt("New table name:", state.currentTable);
+            var newName = prompt("Новое имя таблицы:", state.currentTable);
             if (!newName) { return; }
             var sql = "ALTER TABLE " + quoteIdent(state.currentTable) + " RENAME TO " + quoteIdent(newName) + ";";
             var res = runSqlite(state.currentDb, sql, {});
@@ -2068,7 +2068,7 @@
 
         function openTableDesigner(mode, tableName) {
             if (!state.currentDb) {
-                setStatus("Select a database to work with tables.", true);
+                setStatus("Выберите базу для работы с таблицами.", true);
                 return;
             }
             tableDesignerMode = mode;
@@ -2079,10 +2079,10 @@
             clearDesignerRows();
 
             if (mode === "modify") {
-                title.innerText = "Modify Table";
+                title.innerText = "Модификация таблицы";
                 nameInput.value = tableName;
                 nameInput.disabled = true;
-                hint.innerText = "NOT NULL/DEFAULT/PK constraints are preserved for existing columns.";
+                hint.innerText = "Ограничения NOT NULL/DEFAULT/PK сохраняются для существующих столбцов.";
                 var info = loadTableInfoForDesigner(tableName);
                 if (!info) { return; }
                 if (info.info.length === 0) {
@@ -2102,10 +2102,10 @@
                 }
                 loadDesignerIndexes(tableName);
             } else {
-                title.innerText = "Create Table";
+                title.innerText = "Создание таблицы";
                 nameInput.value = "";
                 nameInput.disabled = false;
-                hint.innerText = "Add columns and generate SQL to create the table.";
+                hint.innerText = "Добавьте столбцы и сформируйте SQL для создания таблицы.";
                 addDesignerRow(null);
                 clearDesignerIndexes();
             }
@@ -2203,7 +2203,7 @@
             var actionTd = document.createElement("td");
             var up = document.createElement("a");
             up.href = "#";
-            up.innerText = "Up";
+            up.innerText = "Вверх";
             up.onclick = (function (rowEl) {
                 return function () {
                     moveDesignerRow(rowEl, -1);
@@ -2215,7 +2215,7 @@
             actionTd.appendChild(space1);
             var down = document.createElement("a");
             down.href = "#";
-            down.innerText = "Down";
+            down.innerText = "Вниз";
             down.onclick = (function (rowEl) {
                 return function () {
                     moveDesignerRow(rowEl, 1);
@@ -2227,7 +2227,7 @@
             actionTd.appendChild(space2);
             var del = document.createElement("a");
             del.href = "#";
-            del.innerText = "Delete";
+            del.innerText = "Удалить";
             del.onclick = (function (rowEl) {
                 return function () {
                     rowEl.parentNode.removeChild(rowEl);
@@ -2320,7 +2320,7 @@
             var actionTd = document.createElement("td");
             var del = document.createElement("a");
             del.href = "#";
-            del.innerText = "Delete";
+            del.innerText = "Удалить";
             del.onclick = (function (rowEl) {
                 return function () {
                     rowEl.parentNode.removeChild(rowEl);
@@ -2516,7 +2516,7 @@
                 tableName = tableDesignerOriginal;
             }
             if (!tableName) {
-                alert("Specify a table name.");
+                alert("Укажите имя таблицы.");
                 return;
             }
             var columns = collectDesignerColumns();
@@ -2524,7 +2524,7 @@
                 return;
             }
             if (columns.length === 0) {
-                alert("Add at least one column.");
+                alert("Добавьте хотя бы один столбец.");
                 return;
             }
             columns = applySafeColumnNames(columns);
@@ -2561,7 +2561,7 @@
                 if (name === "") { continue; }
                 var key = name.toLowerCase();
                 if (used[key]) {
-                    alert("Duplicate column name: " + name);
+                    alert("Дубликат имени столбца: " + name);
                     return null;
                 }
                 used[key] = true;
@@ -2656,7 +2656,7 @@
             var sql = "";
             sql += "BEGIN;\r\n";
             sql += createSql + "\r\n";
-            sql += "-- Verify column mapping if needed.\r\n";
+            sql += "-- Проверьте соответствие столбцов при необходимости.\r\n";
             sql += "INSERT INTO " + quoteIdent(tempName) + " (" + insertCols.join(", ") + ") SELECT " + selectCols.join(", ") + " FROM " + quoteIdent(tableName) + ";\r\n";
             sql += "DROP TABLE " + quoteIdent(tableName) + ";\r\n";
             sql += "ALTER TABLE " + quoteIdent(tempName) + " RENAME TO " + quoteIdent(tableName) + ";\r\n";
@@ -2739,7 +2739,7 @@
 
         function copyTable() {
             if (!state.currentTable) { return; }
-            var newName = prompt("Copy table name:", "copy_" + state.currentTable);
+            var newName = prompt("Имя копии таблицы:", "copy_" + state.currentTable);
             if (!newName) { return; }
             var sql = "CREATE TABLE " + quoteIdent(newName) + " AS SELECT * FROM " + quoteIdent(state.currentTable) + ";";
             var res = runSqlite(state.currentDb, sql, {});
@@ -2752,7 +2752,7 @@
 
         function deleteTable() {
             if (!state.currentTable) { return; }
-            if (!confirm("Delete table " + state.currentTable + "?")) {
+            if (!confirm("Удалить таблицу " + state.currentTable + "?")) {
                 return;
             }
             var sql = "DROP TABLE " + quoteIdent(state.currentTable) + ";";
@@ -2770,7 +2770,7 @@
 
         function openSqlEditor(sql) {
             if (!state.currentDb) {
-                setStatus("Select a database for the SQL editor.", true);
+                setStatus("Выберите базу для SQL редактора.", true);
                 return;
             }
             showSqlView();
@@ -2788,7 +2788,7 @@
 
         function runSqlEditor() {
             if (!state.currentDb) {
-                setStatus("Select a database for the SQL editor.", true);
+                setStatus("Выберите базу для SQL редактора.", true);
                 return;
             }
             var sql = document.getElementById("sqlText").value;
@@ -2802,9 +2802,9 @@
                 var rows = parseCsv(res.out);
                 setSqlResultFromRows(rows, res.out);
                 if (rows && rows.length > 0) {
-                    output = "Rows returned: " + (rows.length - 1);
+                    output = "Получено строк: " + (rows.length - 1);
                 } else {
-                    output = "Query executed.";
+                    output = "Запрос выполнен.";
                 }
             }
             document.getElementById("sqlOutput").innerText = output;
@@ -2843,7 +2843,7 @@
             if (!container) { return; }
             container.innerHTML = "";
             if (!sqlResultState.columns || sqlResultState.columns.length === 0) {
-                container.innerText = "No data.";
+                container.innerText = "Нет данных.";
                 renderSqlResultPager();
                 return;
             }
@@ -2865,7 +2865,7 @@
                 var emptyRow = document.createElement("tr");
                 var emptyTd = document.createElement("td");
                 emptyTd.colSpan = sqlResultState.columns.length;
-                emptyTd.innerText = "No data.";
+                emptyTd.innerText = "Нет данных.";
                 emptyRow.appendChild(emptyTd);
                 tbody.appendChild(emptyRow);
             } else {
@@ -2898,8 +2898,8 @@
             if (!info || !sizeInfo) { return; }
             var totalPages = sqlResultState.totalPages;
             var currentPage = totalPages === 0 ? 0 : (sqlResultState.pageIndex + 1);
-            info.innerText = "Page " + currentPage + " of " + totalPages + " (total " + sqlResultState.totalRows + ")";
-            sizeInfo.innerText = pageRows + " rows per page";
+            info.innerText = "Страница " + currentPage + " из " + totalPages + " (всего " + sqlResultState.totalRows + ")";
+            sizeInfo.innerText = "по " + pageRows + " строк";
             setLinkEnabled("btnSqlFirst", sqlResultState.pageIndex > 0);
             setLinkEnabled("btnSqlPrev", sqlResultState.pageIndex > 0);
             setLinkEnabled("btnSqlNext", sqlResultState.pageIndex < totalPages - 1);
@@ -2917,10 +2917,10 @@
 
         function exportSqlCsv() {
             if (!sqlResultState.rawCsv) {
-                setStatus("No data to export.", true);
+                setStatus("Нет данных для экспорта.", true);
                 return;
             }
-            var fileName = prompt("CSV file name:", "result.csv");
+            var fileName = prompt("Имя CSV файла:", "result.csv");
             if (!fileName) { return; }
             if (fileName.toLowerCase().indexOf(".csv") === -1) {
                 fileName += ".csv";
@@ -2930,9 +2930,9 @@
                 var rows = parseCsv(sqlResultState.rawCsv);
                 var csvText = buildCsv(rows, ";");
                 writeTextFileUtf8(path, csvText);
-                setStatus("CSV saved: " + path, false);
+                setStatus("CSV сохранен: " + path, false);
             } catch (e) {
-                setStatus("Error saving CSV: " + e.message, true);
+                setStatus("Ошибка сохранения CSV: " + e.message, true);
             }
         }
 
@@ -2950,7 +2950,7 @@
 
         function runSqliteWithScript(dbPath, sql, options, outputPath, keepOutput) {
             if (!fso.FileExists(sqlitePath)) {
-                return { out: "", err: "sqlite3.exe not found in the application directory.", code: 1 };
+                return { out: "", err: "sqlite3.exe не найден в каталоге приложения.", code: 1 };
             }
             var scriptPath = getFixedTempFilePath("__sqlite_sql_temp__.sql");
             try {
@@ -3014,7 +3014,7 @@
                 var code = exec.ExitCode;
                 return { out: out, err: err, code: code };
             } catch (e) {
-                return { out: "", err: "Error running command: " + e.message, code: 1 };
+                return { out: "", err: "Ошибка запуска команды: " + e.message, code: 1 };
             }
         }
 
@@ -3408,11 +3408,11 @@
     <div id="loginOverlay">
         <div id="loginBox">
             <h2>SQLite Desk Studio v.1.1.2026</h2>
-            <div>Enter password:</div>
+            <div>Введите пароль:</div>
             <input id="loginPassword" type="password">
             <div class="actions">
-                <a id="btnLogin" href="#">Login</a>
-                <a id="btnExit" href="#">Exit</a>
+                <a id="btnLogin" href="#">Войти</a>
+                <a id="btnExit" href="#">Выход</a>
             </div>
             <div id="loginError"></div>
         </div>
@@ -3422,11 +3422,11 @@
             <div id="logo">SQLite Desk Studio v.1.1.2026</div>
             <div id="sqliteVersion" class="muted"></div>
             <div id="dbActions">
-                <a id="btnNewDb" href="#">Create database</a>
-                <a id="btnRenameDb" href="#">Rename</a>
-                <a id="btnCopyDb" href="#">Copy</a>
-                <a id="btnDeleteDb" href="#">Delete</a>
-                <a id="btnRefreshDb" href="#">Refresh</a>
+                <a id="btnNewDb" href="#">Создать базу</a>
+                <a id="btnRenameDb" href="#">Переименовать</a>
+                <a id="btnCopyDb" href="#">Копировать</a>
+                <a id="btnDeleteDb" href="#">Удалить</a>
+                <a id="btnRefreshDb" href="#">Обновить</a>
             </div>
             <div id="dbList"></div>
         </div>
@@ -3434,18 +3434,18 @@
         <div id="main">
             <div id="topbar">
                 <div id="currentInfo">
-                    Database: <span id="currentDbName">—</span>
+                    База: <span id="currentDbName">—</span>
                     &nbsp;|&nbsp;
-                    Table: <span id="currentTableName">—</span>
+                    Таблица: <span id="currentTableName">—</span>
                 </div>
                 <div id="topActions">
-                    <a id="btnRefreshAll" href="#">Refresh</a>
-                    <a id="btnNewTable" href="#">Create table</a>
-                    <a id="btnRenameTable" href="#">Rename</a>
-                    <a id="btnModifyTable" href="#">Modify</a>
-                    <a id="btnCopyTable" href="#">Copy</a>
-                    <a id="btnDeleteTable" href="#">Delete</a>
-                    <a id="btnSqlEditor" href="#">SQL editor</a>
+                    <a id="btnRefreshAll" href="#">Обновить</a>
+                    <a id="btnNewTable" href="#">Создать таблицу</a>
+                    <a id="btnRenameTable" href="#">Переименовать</a>
+                    <a id="btnModifyTable" href="#">Модифицировать</a>
+                    <a id="btnCopyTable" href="#">Копировать</a>
+                    <a id="btnDeleteTable" href="#">Удалить</a>
+                    <a id="btnSqlEditor" href="#">SQL редактор</a>
                 </div>
                 <div id="status"></div>
             </div>
@@ -3454,74 +3454,74 @@
                     <div id="tablePane">
                         <div id="tableScroll">
                             <div id="welcome">
-                                Select a database and table on the left. Use the SQL editor for structure and advanced changes.
+                                Выберите базу и таблицу слева. Для структуры и сложных изменений используйте SQL редактор.
                             </div>
                             <div id="structureView">
                                 <div id="tableDesignerBox">
-                                    <h3 id="tableDesignerTitle">Table editor</h3>
+                                    <h3 id="tableDesignerTitle">Редактор таблицы</h3>
                                     <div id="tableDesignerForm">
-                                        Table name:
+                                        Имя таблицы:
                                         <input id="designerTableName" type="text">
                                     </div>
                                     <div id="designerHint" class="muted"></div>
                                     <table id="designerColumnsTable">
                                         <thead>
                                             <tr>
-                                                <th>Column name</th>
-                                                <th>Data type</th>
+                                                <th>Имя столбца</th>
+                                                <th>Тип данных</th>
                                                 <th>PK</th>
-                                                <th>Generation</th>
-                                                <th>Actions</th>
+                                                <th>Генерация</th>
+                                                <th>Действия</th>
                                             </tr>
                                         </thead>
                                         <tbody id="designerColumnsBody"></tbody>
                                     </table>
                                     <div id="designerIndexes">
-                                        <div class="label">Indexes:</div>
+                                        <div class="label">Индексы:</div>
                                         <table id="designerIndexesTable">
                                             <thead>
                                                 <tr>
-                                                    <th>Index name</th>
-                                                    <th>Fields</th>
-                                                    <th>Actions</th>
+                                                    <th>Имя индекса</th>
+                                                    <th>Поля</th>
+                                                    <th>Действия</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="designerIndexesBody"></tbody>
                                         </table>
                                         <div id="designerIndexActions">
-                                            <a id="btnDesignerAddIndex" href="#">Add index</a>
-                                            <a id="btnDesignerRefreshIndexCols" href="#">Refresh fields</a>
+                                            <a id="btnDesignerAddIndex" href="#">Добавить индекс</a>
+                                            <a id="btnDesignerRefreshIndexCols" href="#">Обновить поля</a>
                                         </div>
                                     </div>
                                     <div id="tableDesignerActions">
-                                        <a id="btnDesignerAddColumn" href="#">Add column</a>
-                                        <a id="btnDesignerGenerate" href="#">Generate SQL</a>
-                                        <a id="btnDesignerCancel" href="#">Cancel</a>
+                                        <a id="btnDesignerAddColumn" href="#">Добавить столбец</a>
+                                        <a id="btnDesignerGenerate" href="#">Сформировать SQL</a>
+                                        <a id="btnDesignerCancel" href="#">Отмена</a>
                                     </div>
                                 </div>
                             </div>
                             <div id="tableView">
                                 <div id="tableTitle"></div>
                                 <div id="tableActions">
-                                    <a id="btnSaveChanges" href="#">Save changes</a>
-                                    <a id="btnAddRow" href="#">Add row</a>
-                                    <a id="btnReloadTable" href="#">Reload</a>
-                                    <a id="btnClearTable" href="#">Clear table</a>
-                                    <a id="btnExportCsv" href="#">Export CSV</a>
-                                    <a id="btnImportCsv" href="#">Import CSV</a>
-                                    <a id="btnExportSql" href="#">Export SQL</a>
-                                    <a id="btnImportSql" href="#">Import SQL</a>
+                                    <a id="btnSaveChanges" href="#">Сохранить изменения</a>
+                                    <a id="btnAddRow" href="#">Добавить строку</a>
+                                    <a id="btnReloadTable" href="#">Перезагрузить</a>
+                                    <a id="btnClearTable" href="#">Очистить таблицу</a>
+                                    <a id="btnExportCsv" href="#">Экспорт CSV</a>
+                                    <a id="btnImportCsv" href="#">Импорт CSV</a>
+                                    <a id="btnExportSql" href="#">Экспорт SQL</a>
+                                    <a id="btnImportSql" href="#">Импорт SQL</a>
                                 </div>
                                 <div id="pager">
-                                    <a id="btnFirstPage" href="#">First</a>
-                                    <a id="btnPrevPage" href="#">Previous</a>
-                                    <span id="pageInfo">Page 0 of 0</span>
-                                    <a id="btnNextPage" href="#">Next</a>
-                                    <a id="btnLastPage" href="#">Last</a>
-                                    <span id="pageSizeInfo" class="muted">0 rows per page</span>
-                                    <a id="btnApplyFilters" href="#">Apply filter</a>
-                                    <a id="btnClearFilters" href="#">Clear filter</a>
-                                    <a id="btnClearSort" href="#">Clear sort</a>
+                                    <a id="btnFirstPage" href="#">Первая</a>
+                                    <a id="btnPrevPage" href="#">Предыдущая</a>
+                                    <span id="pageInfo">Страница 0 из 0</span>
+                                    <a id="btnNextPage" href="#">Следующая</a>
+                                    <a id="btnLastPage" href="#">Последняя</a>
+                                    <span id="pageSizeInfo" class="muted">по 0 строк</span>
+                                    <a id="btnApplyFilters" href="#">Применить фильтр</a>
+                                    <a id="btnClearFilters" href="#">Сбросить фильтр</a>
+                                    <a id="btnClearSort" href="#">Сбросить сортировку</a>
                                 </div>
                                 <div id="tableData"></div>
                             </div>
@@ -3530,32 +3530,32 @@
                     <div id="sqlResizeHandle"></div>
                     <div id="sqlPane">
                         <div id="sqlHeader">
-                            SQL editor (current database)
+                            SQL редактор (контекст текущей базы)
                             <div id="sqlControls">
-                                <a id="btnSqlCollapse" href="#">Collapse</a>
-                                <a id="btnSqlExpand" href="#">Expand</a>
-                                <a id="btnSqlFull" href="#">Fullscreen</a>
+                                <a id="btnSqlCollapse" href="#">Свернуть</a>
+                                <a id="btnSqlExpand" href="#">Развернуть</a>
+                                <a id="btnSqlFull" href="#">На весь экран</a>
                             </div>
                         </div>
                         <div id="sqlBody">
                             <div id="sqlEditorArea">
-                                <div class="muted">Hint: use [] for names, NULL for empty values.</div>
+                                <div class="muted">Подсказка: используйте [] для имен, NULL для пустых значений.</div>
                                 <textarea id="sqlText"></textarea>
                                 <div id="sqlEditorActions">
-                                    <a id="btnRunSql" href="#">Run</a>
-                                    <a id="btnClearSql" href="#">Clear</a>
+                                    <a id="btnRunSql" href="#">Выполнить</a>
+                                    <a id="btnClearSql" href="#">Очистить</a>
                                 </div>
                                 <div id="sqlOutput"></div>
                             </div>
                             <div id="sqlResults">
                                 <div id="sqlResultPager">
-                                    <a id="btnSqlFirst" href="#">First</a>
-                                    <a id="btnSqlPrev" href="#">Previous</a>
-                                    <span id="sqlPageInfo">Page 0 of 0</span>
-                                    <a id="btnSqlNext" href="#">Next</a>
-                                    <a id="btnSqlLast" href="#">Last</a>
-                                    <span id="sqlPageSizeInfo" class="muted">0 rows per page</span>
-                                    <a id="btnExportSqlCsv" href="#">Export to CSV</a>
+                                    <a id="btnSqlFirst" href="#">Первая</a>
+                                    <a id="btnSqlPrev" href="#">Предыдущая</a>
+                                    <span id="sqlPageInfo">Страница 0 из 0</span>
+                                    <a id="btnSqlNext" href="#">Следующая</a>
+                                    <a id="btnSqlLast" href="#">Последняя</a>
+                                    <span id="sqlPageSizeInfo" class="muted">по 0 строк</span>
+                                    <a id="btnExportSqlCsv" href="#">Экспорт в CSV</a>
                                 </div>
                                 <div id="sqlResultTable"></div>
                             </div>
