@@ -545,6 +545,7 @@
         var fso = null;
         var shell = null;
         var appDir = "";
+        var dbDir = "";
         var sqlitePath = "";
         var configPassword = "";
         var pageRows = 25;
@@ -605,6 +606,7 @@
             var config = loadConfig();
             configPassword = config.password;
             pageRows = config.pageRows;
+            dbDir = resolveDbDir(config.basePath);
 
             bindUi();
             initSplitLayout();
@@ -716,7 +718,7 @@
         }
 
         function loadConfig() {
-            var config = { password: "", pageRows: 25 };
+            var config = { password: "", pageRows: 25, basePath: "" };
             var path = appDir + "\\admin.ini";
             if (!fso.FileExists(path)) {
                 return config;
@@ -745,6 +747,8 @@
                     if (!isNaN(value) && value > 0) {
                         config.pageRows = value;
                     }
+                } else if (keyNormalized === "basepath") {
+                    config.basePath = valueText;
                 }
             }
             return config;
@@ -757,6 +761,45 @@
             }
             path = path.replace(/\//g, "\\");
             return path.substring(0, path.lastIndexOf("\\"));
+        }
+
+        function resolveDbDir(basePath) {
+            var text = trim(basePath || "");
+            if (!text) {
+                return appDir;
+            }
+            var normalized = text.replace(/\//g, "\\");
+            if (isAbsolutePath(normalized)) {
+                return normalizeDir(normalized);
+            }
+            return normalizeDir(appDir + "\\" + normalized);
+        }
+
+        function isAbsolutePath(path) {
+            return /^[A-Za-z]:[\\\/]/.test(path) || /^\\\\/.test(path);
+        }
+
+        function normalizeDir(path) {
+            var text = String(path || "").replace(/\//g, "\\");
+            while (text.length > 3 && text.charAt(text.length - 1) === "\\") {
+                text = text.substring(0, text.length - 1);
+            }
+            return text;
+        }
+
+        function getDbDir() {
+            return dbDir || appDir;
+        }
+
+        function buildDbPath(fileName) {
+            var base = getDbDir();
+            if (!base) {
+                return fileName;
+            }
+            if (base.charAt(base.length - 1) === "\\" || base.charAt(base.length - 1) === "/") {
+                return base + fileName;
+            }
+            return base + "\\" + fileName;
         }
 
         function refreshAll() {
@@ -783,7 +826,11 @@
 
         function listDbFiles() {
             var list = [];
-            var folder = fso.GetFolder(appDir);
+            var folderPath = getDbDir();
+            if (!folderPath || !fso.FolderExists(folderPath)) {
+                return list;
+            }
+            var folder = fso.GetFolder(folderPath);
             var files = new Enumerator(folder.Files);
             for (; !files.atEnd(); files.moveNext()) {
                 var file = files.item();
@@ -1930,7 +1977,7 @@
             if (name.toLowerCase().indexOf(".sqlite") === -1) {
                 name += ".sqlite";
             }
-            var path = appDir + "\\" + name;
+            var path = buildDbPath(name);
             if (fso.FileExists(path)) {
                 alert("Файл уже существует.");
                 return;
@@ -1952,7 +1999,7 @@
             if (newName.toLowerCase().indexOf(".sqlite") === -1) {
                 newName += ".sqlite";
             }
-            var newPath = appDir + "\\" + newName;
+            var newPath = buildDbPath(newName);
             if (fso.FileExists(newPath)) {
                 alert("Файл с таким именем уже существует.");
                 return;
@@ -1970,7 +2017,7 @@
             if (newName.toLowerCase().indexOf(".sqlite") === -1) {
                 newName += ".sqlite";
             }
-            var newPath = appDir + "\\" + newName;
+            var newPath = buildDbPath(newName);
             if (fso.FileExists(newPath)) {
                 alert("Файл с таким именем уже существует.");
                 return;
